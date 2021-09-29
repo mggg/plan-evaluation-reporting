@@ -47,8 +47,7 @@ class ChainRecorder:
             initial_partion = self._initial_partition(num_districts, epsilon)
 
         proposal = self._proposal(num_districts, epsilon, county_aware)
-        cs = [constraints.within_percent_of_ideal_population(initial_partion, 
-                                                                                epsilon)]
+        cs = [constraints.within_percent_of_ideal_population(initial_partion, epsilon)]
         accept_func = accept.always_accept
 
         chain = MarkovChain(proposal=proposal, constraints=cs,
@@ -56,5 +55,5 @@ class ChainRecorder:
                             total_steps=steps)
 
         for i, part in  enumerate(Record(chain, "{}/{}".format(self.output_dir, file_name))):
-            if i % self.verbose_freq == self.verbose_freq:
+            if i % self.verbose_freq == self.verbose_freq - 1:
                 print("*", end="")
