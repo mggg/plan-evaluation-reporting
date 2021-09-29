@@ -16,8 +16,8 @@ parser.add_argument("--county_aware", action='store_const', const=True, default=
 args = parser.parse_args()
 
 ## Read in MI
-graph = Graph.from_json("../dual_graphs/mi_vtds.json")
-rec = ChainRecorder(graph, "mi_chains", "TOTPOP", "COUNTY")
+graph = Graph.from_json("../dual_graphs/mi_vtds_0_indexed.json")
+rec = ChainRecorder(graph, "mi_chains", "TOTPOP", "COUNTY", verbose_freq=100)
 
 plan_type = args.map
 districts = {"congress": 13, "state_senate": 38, "state_house": 110}

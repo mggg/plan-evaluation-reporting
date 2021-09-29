@@ -8,12 +8,12 @@ import warnings
 from region_aware import *
 
 class ChainRecorder:
-    def __init__(self, graph, output_dir, pop_col, county_col=None) -> None:
+    def __init__(self, graph, output_dir, pop_col, county_col=None, verbose_freq=None) -> None:
         self.graph = graph
         self.output_dir = output_dir
         self.pop_col = pop_col
         self.county_col = county_col
-        self.verbose_freq = 1000
+        self.verbose_freq = verbose_freq
 
         ## Set up pop info
         self.tot_pop = sum([graph.nodes()[n][pop_col] for n in graph.nodes()])
@@ -55,5 +55,5 @@ class ChainRecorder:
                             total_steps=steps)
 
         for i, part in  enumerate(Record(chain, "{}/{}".format(self.output_dir, file_name))):
-            if i % self.verbose_freq == self.verbose_freq - 1:
+            if self.verbose_freq is not None and i % self.verbose_freq == self.verbose_freq - 1:
                 print("*", end="")
