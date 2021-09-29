@@ -44,3 +44,5 @@ mi_g.add_edge("26029029018", "26029029006")
 nx.draw(mi_g, pos=pos(mi_g), node_size=1)
 plt.savefig("mi_dual_graph.png", dpi=200)
 mi_g.to_json("../dual_graphs/mi_vtds.json")
+
+nx.relabel.convert_node_labels_to_integers(mi_g, first_label=0, ordering='default', label_attribute="GEOID20").to_json("../dual_graphs/mi_vtds_0_indexed.json")
