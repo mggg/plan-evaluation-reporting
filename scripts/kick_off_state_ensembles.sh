@@ -1,6 +1,6 @@
 #!/bin/bash
 
-state = $1
+state=$1
 echo $state
 
 for map in  "congress" "state_senate" "state_house"
