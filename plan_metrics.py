@@ -20,7 +20,7 @@ class PlanMetrics:
     
     def summary_data(self, elections, num_districts, epsilon, method):
         return {
-                "type": "summary",
+                "type": "ensemble_summary",
                 "pov_party": self.party,
                 "elections": elections,
                 "num_districts": num_districts,
@@ -83,7 +83,7 @@ class PlanMetrics:
 
     def plan_summary(self, plan):
         return {
-            "type": "partition_stats",
+            "type": "ensemble_plan",
             "demographics": self.demographic_metrics(plan),
             "partisanship": self.partisan_metrics(plan),
             "compactness": self.compactness_metrics(plan)
