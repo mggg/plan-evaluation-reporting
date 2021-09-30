@@ -14,11 +14,11 @@ echo running on: `hostname` # print some info about where we are running
 cd $HOME
 cd plan-evaluation
 
-if [ $3 == 1 ]
+if [ $4 == 1 ]
 then
     echo "county"
-    python run_ensemble.py ${1} ${2} 100000 --county_aware #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
+    python run_ensemble.py ${1} ${2} ${3} --county_aware #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
 else
     echo "neutral"
-    python run_ensemble.py ${1} ${2} 100000 #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
+    python run_ensemble.py ${1} ${2} ${3} #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
 fi
