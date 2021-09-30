@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_regions(graph, region_col):
     """
     Helper function for `num_region_splits()`
@@ -34,3 +36,48 @@ def swing_districts(partition):
         if sum(party_list) in range(1, len(partition.elections)):
             num_swings += 1
     return num_swings
+
+def L1(vec):
+    """
+    L1 distance from the 0-vector.
+    """
+    return sum(abs(v) for v in vec)
+
+def agg_prop(partition, elections=None):
+    if elections is None:
+        elections = partition.elections
+    num_R_seats = 0
+    for election in elections:
+        num_R_seats += partition[election].wins("Rep")
+    prop_R_seats = np.sum([partition[election].percent("Rep") * len(partition) for election in elections])
+    return round(num_R_seats - prop_R_seats)
+
+def P1(partition, elections=None):
+    """
+    P1 proportionality score: The distance between the average GOP seat share and the GOP vote share
+    across N general elections:
+    """
+    if elections is None:
+        elections = partition.elections
+    num_dists = len(partition)
+    num_R_seats = 0
+    for election in elections:
+        num_R_seats += partition[election].wins('Rep')
+    average_R_vote_share = np.mean([partition[election].percent('Rep') for election in elections])
+    average_R_seat_share = num_R_seats / (num_dists * len(elections))
+    return abs(average_R_seat_share - average_R_vote_share)
+
+def P2(partition, elections=None):
+    """
+    P2 proportionality score: The L1 distance between the GOP seat share and the GOP vote share
+    summed over each of N general elections.
+    """
+    if elections is None:
+        elections = partition.elections
+    num_dists = len(partition)
+    proportionality_vector = []
+    for election in elections:
+        vote_share = partition[election].percent("Rep")
+        seat_share = partition[election].wins("Rep") / num_dists
+        proportionality_vector.append(seat_share - vote_share)
+    return L1(proportionality_vector)
