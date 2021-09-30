@@ -17,8 +17,8 @@ cd plan-evaluation
 if [ $4 == 1 ]
 then
     echo "county"
-    python collect_scores.py ${1} ${2} ${3} --county_aware #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
+    python collect_scores.py ${1} ${2} ${3} --county_aware -v #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
 else
     echo "neutral"
-    python collect_scores.py ${1} ${2} ${3} #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
+    python collect_scores.py ${1} ${2} ${3} -v #$SLURM_ARRAY_TASK_ID # run the python code with the arguments. 
 fi
