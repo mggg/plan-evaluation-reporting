@@ -21,6 +21,7 @@ parser.add_argument("n", metavar="iterations", type=int,
 parser.add_argument("--county_aware", action='store_const', const=True, default=False,
                     dest="county_aware",
                     help="Chain builds districts with awareness of counties? (default False)")
+parser.add_argument('--verbose', '-v', action='count', default=0)
 args = parser.parse_args()
 
 ## Read in args and state specifications
@@ -29,6 +30,7 @@ plan_type = args.map
 steps = args.n
 county_aware = args.county_aware
 method = "county_aware" if county_aware else "neutral"
+how_verbose = args.verbose
 
 with open("{}/{}.json".format(STATE_SPECS_DIR, state)) as fin:
     state_specification = json.load(fin)
@@ -66,6 +68,13 @@ scores = PlanMetrics(graph, election_names, party, pop_col, updaters=election_up
 with open(output_path, "w") as fout:
     header = json.dumps(scores.summary_data(elections, k, eps, method))
     print(header, file=fout)
-    for part in tqdm(Replay(graph, chain_path, {**demographic_updaters, **election_updaters})):
-        plan_details = json.dumps(scores.plan_summary(part))
-        print(plan_details, file=fout)
+    if how_verbose >= 2:
+        for part in tqdm(Replay(graph, chain_path, {**demographic_updaters, **election_updaters})):
+            plan_details = json.dumps(scores.plan_summary(part))
+            print(plan_details, file=fout)
+    else:
+        for i, part in enumerate(Replay(graph, chain_path, {**demographic_updaters, **election_updaters})):
+            if how_verbose > 0 and i % 100 == 100 - 1:
+                print("*", end="")
+            plan_details = json.dumps(scores.plan_summary(part))
+            print(plan_details, file=fout)
