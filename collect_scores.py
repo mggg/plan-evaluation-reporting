@@ -81,6 +81,6 @@ with open(output_path, "w") as fout:
     else:
         for i, part in enumerate(plan_generator):
             if how_verbose > 0 and i % 100 == 100 - 1:
-                print("*", end="")
+                print("*", end="", flush=True)
             plan_details = json.dumps(scores.plan_summary(part))
             print(plan_details, file=fout)
