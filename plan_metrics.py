@@ -1,4 +1,4 @@
-import statistics
+from functools import reduce
 import networkx as nx
 import numpy as np
 from gerrychain import Partition, updaters, metrics
@@ -15,22 +15,40 @@ class PlanMetrics:
         self.pop_col = pop_col
         self.party = party
         self.county_part = Partition(self.graph, self.county_column, 
-                                     updaters={"population": Tally(pop_col, alias="population"), **updaters})
+                                     updaters={"population": Tally(self.pop_col, alias="population"), **updaters})
         self.demographic_cols = demographic_cols
+        self.counties = set(self.county_part.parts.keys())
+        self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
     
-    def summary_data(self, elections, num_districts, epsilon, method):
+    def summary_data(self, elections, districts, epsilon, method):
         return {
                 "type": "ensemble_summary",
-                "pov_party": self.party,
-                "elections": elections,
-                "num_districts": num_districts,
+                "num_districts": len(districts),
+                "district_ids": list(districts),
                 "epsilon": epsilon,
                 "chain_type": method,
-                "pop_col": self.pop_col
+                "pop_col": self.pop_col,
+                "pov_party": self.party,
+                "elections": elections
                 }
 
+    def county_split_details(self,part):
+        """
+        Which districts each county is touched by.
+        """
+        assignment = dict(part.assignment)
+        return {county: reduce(lambda districts, node: districts | set([assignment[node]]), self.nodes_by_county[county], set()) for county in self.counties}
+
     def compactness_metrics(self, part):
-        return {"num_cut_edges": len(part["cut_edges"])}
+        county_details = self.county_split_details(part)
+        county_pieces = reduce(lambda acc, ds: acc + len(ds), county_details.values(), 0)
+        county_splits = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
+
+        return {
+                "num_cut_edges": len(part["cut_edges"]),
+                "num_county_pieces": county_pieces,
+                "num_split_counties": county_splits,
+                }
     
     def demographic_metrics(self, part):
         return {demo_col: part[demo_col] for demo_col in self.demographic_cols}

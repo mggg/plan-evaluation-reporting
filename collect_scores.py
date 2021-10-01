@@ -66,14 +66,20 @@ scores = PlanMetrics(graph, election_names, party, pop_col, updaters=election_up
 
 
 with open(output_path, "w") as fout:
-    header = json.dumps(scores.summary_data(elections, k, eps, method))
+    plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters})
+    part = next(plan_generator)
+
+    header = json.dumps(scores.summary_data(elections, part.parts.keys(), eps, method))
+    plan_details = json.dumps(scores.plan_summary(part))
     print(header, file=fout)
+    print(plan_details, file=fout)
+
     if how_verbose >= 2:
-        for part in tqdm(Replay(graph, chain_path, {**demographic_updaters, **election_updaters})):
+        for part in tqdm(plan_generator):
             plan_details = json.dumps(scores.plan_summary(part))
             print(plan_details, file=fout)
     else:
-        for i, part in enumerate(Replay(graph, chain_path, {**demographic_updaters, **election_updaters})):
+        for i, part in enumerate(plan_generator):
             if how_verbose > 0 and i % 100 == 100 - 1:
                 print("*", end="")
             plan_details = json.dumps(scores.plan_summary(part))
