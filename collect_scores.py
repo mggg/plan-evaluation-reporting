@@ -62,7 +62,7 @@ demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col i
 
 graph = Graph.from_json(dual_graph_file)
 
-scores = PlanMetrics(graph, election_names, party, pop_col, updaters=election_updaters)
+scores = PlanMetrics(graph, election_names, party, pop_col, updaters=election_updaters, county_col=county_col)
 
 
 with open(output_path, "w") as fout:

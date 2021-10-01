@@ -42,16 +42,16 @@ class ChainRecorder:
             return ReCom(self.pop_col, ideal_pop, epsilon)
 
     def record_chain(self, num_districts, epsilon, steps, file_name, county_aware=False,
-                     initial_partion=None):
-        if initial_partion is None:
-            initial_partion = self._initial_partition(num_districts, epsilon)
+                     initial_partition=None):
+        if initial_partition is None:
+            initial_partition = self._initial_partition(num_districts, epsilon)
 
         proposal = self._proposal(num_districts, epsilon, county_aware)
-        cs = [constraints.within_percent_of_ideal_population(initial_partion, epsilon)]
+        cs = [constraints.within_percent_of_ideal_population(initial_partition, epsilon)]
         accept_func = accept.always_accept
 
         chain = MarkovChain(proposal=proposal, constraints=cs,
-                            accept=accept_func, initial_state=initial_partion,
+                            accept=accept_func, initial_state=initial_partition,
                             total_steps=steps)
 
         for i, part in  enumerate(Record(chain, "{}/{}".format(self.output_dir, file_name))):
