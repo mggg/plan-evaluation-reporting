@@ -1,0 +1,119 @@
+{
+    "name": "Michigan",
+    "postal": "MI",
+    "plan_types": [
+        "congress",
+        "state_house",
+        "state_senate"
+    ],
+    "districts": {
+        "congress": 13,
+        "state_senate": 38,
+        "state_house": 110
+    },
+    "epsilons": {
+        "congress": 0.01,
+        "state_senate": 0.02,
+        "state_house": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "mi_vtds_0_indexed.json",
+    "pop_col": "TOTPOP",
+    "county_col": "COUNTY",
+    "demographic_cols": [
+        "TOTPOP",
+        "WHITE",
+        "BLACK",
+        "AMIN",
+        "ASIAN",
+        "NHPI",
+        "OTHER",
+        "2MORE",
+        "HISP",
+        "VAP",
+        "WVAP",
+        "BVAP",
+        "AMINVAP",
+        "ASIANVAP",
+        "NHPIVAP",
+        "OTHERVAP",
+        "2MOREVAP",
+        "HVAP"
+    ],
+    "elections": [
+        {
+            "name": "GOV18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV18R"
+                }
+            ]
+        },
+        {
+            "name": "SEN18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN18R"
+                }
+            ]
+        },
+        {
+            "name": "SOS18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SOS18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SOS18R"
+                }
+            ]
+        },
+        {
+            "name": "AG18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG18R"
+                }
+            ]
+        },
+        {
+            "name": "PRES16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES16R"
+                }
+            ]
+        }
+    ],
+    "pov_party": "Democratic",
+    "metrics": {
+        "compactness":["cut_edges"],
+        "demographic":[{"column_tallies": "all"}],
+        "partisanship": [""]
+    }
+}
