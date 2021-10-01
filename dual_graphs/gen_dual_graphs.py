@@ -23,7 +23,7 @@ plt.savefig("wi_dual_graph.png", dpi=200)
 nx.draw(va_g, pos=pos(va_g), node_size=1)
 plt.savefig("va_dual_graph.png", dpi=200)
 nx.draw(mi_g, pos=pos(mi_g), node_size=1)
-plt.savefig("va_dual_graph.png", dpi=200)
+plt.savefig("mi_dual_graph.png", dpi=200)
 
 
 ## Code to figure out which edges to add in MI

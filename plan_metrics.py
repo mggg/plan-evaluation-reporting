@@ -95,7 +95,8 @@ class PlanMetrics:
                                         "num_swing_districts": int(num_swing_districts),
                                         "num_competitive_districts": int(num_competitive_districts),
                                         "num_party_districts": int(num_party_districts),
-                                        "num_op_party_districts": int(num_op_party_districts)
+                                        "num_op_party_districts": int(num_op_party_districts),
+                                        "num_party_wins_by_district": [int(d_wins) for d_wins in election_stability]
                                 }}
         return response
 

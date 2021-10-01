@@ -1,0 +1,166 @@
+{
+    "name": "Virginia",
+    "postal": "VA",
+    "plan_types": [
+        "congress",
+        "state_house",
+        "state_senate"
+    ],
+    "districts": {
+        "congress": 11,
+        "state_senate": 40,
+        "state_house": 100
+    },
+    "epsilons": {
+        "congress": 0.01,
+        "state_senate": 0.02,
+        "state_house": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "va_vtds_0_indexed.json",
+    "pop_col": "TOTPOP",
+    "county_col": "COUNTY",
+    "demographic_cols": [
+        "TOTPOP",
+        "WHITE",
+        "BLACK",
+        "AMIN",
+        "ASIAN",
+        "NHPI",
+        "OTHER",
+        "2MORE",
+        "HISP",
+        "VAP",
+        "WVAP",
+        "BVAP",
+        "AMINVAP",
+        "ASIANVAP",
+        "NHPIVAP",
+        "OTHERVAP",
+        "2MOREVAP",
+        "HVAP"
+    ],
+    "elections": [
+        {
+            "name": "SEN18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G18DSEN"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G18RSEN"
+                }
+            ]
+        },
+        {
+            "name": "USH18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G18DHOR"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G18RHOR"
+                }
+            ]
+        },
+        {
+            "name": "GOV17",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G17DGOV"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G17RGOV"
+                }
+            ]
+        },
+        {
+            "name": "HOD17",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G17DHOD"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G17RHOD"
+                }
+            ]
+        },
+        {
+            "name": "ATG17",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G17DATG"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G17RATG"
+                }
+            ]
+        },
+        {
+            "name": "LTG17",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G17DLTG"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G17RLTG"
+                }
+            ]
+        },
+        {
+            "name": "PRES16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G16DPRS"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G16RPRS"
+                }
+            ]
+        },
+        {
+            "name": "USH16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "G16DHOR"
+                },
+                {
+                    "name": "Republican",
+                    "key": "G16RHOR"
+                }
+            ]
+        }
+    ],
+    "pov_party": "Democratic",
+    "metrics": {
+        "compactness": [
+            "cut_edges"
+        ],
+        "demographic": [
+            {
+                "column_tallies": "all"
+            }
+        ],
+        "partisanship": [
+            ""
+        ]
+    }
+}

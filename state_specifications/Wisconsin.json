@@ -1,0 +1,244 @@
+{
+    "name": "Wisconsin",
+    "postal": "WI",
+    "plan_types": [
+        "congress",
+        "state_house",
+        "state_senate"
+    ],
+    "districts": {
+        "congress": 8,
+        "state_senate": 33,
+        "state_house": 99
+    },
+    "epsilons": {
+        "congress": 0.01,
+        "state_senate": 0.02,
+        "state_house": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "wi_vtds_0_indexed.json",
+    "pop_col": "TOTPOP",
+    "county_col": "COUNTY",
+    "demographic_cols": [
+        "TOTPOP",
+        "WHITE",
+        "BLACK",
+        "AMIN",
+        "ASIAN",
+        "NHPI",
+        "OTHER",
+        "2MORE",
+        "HISP",
+        "VAP",
+        "WVAP",
+        "BVAP",
+        "AMINVAP",
+        "ASIANVAP",
+        "NHPIVAP",
+        "OTHERVAP",
+        "2MOREVAP",
+        "HVAP"
+    ],
+    "elections": [
+        {
+            "name": "SEN18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN18R"
+                }
+            ]
+        },
+        {
+            "name": "GOV18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV18R"
+                }
+            ]
+        },
+        {
+            "name": "ATG18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG18R"
+                }
+            ]
+        },
+        {
+            "name": "SOS18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SOS18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SOS18R"
+                }
+            ]
+        },
+        {
+            "name": "TRES18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "TRE18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TRE18R"
+                }
+            ]
+        },
+        {
+            "name": "PRES16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES16R"
+                }
+            ]
+        },
+        {
+            "name": "SEN16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN16R"
+                }
+            ]
+        },
+        {
+            "name": "GOV14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV14D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV14R"
+                }
+            ]
+        },
+        {
+            "name": "ATG14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG14D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG14R"
+                }
+            ]
+        },
+        {
+            "name": "SOS14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SOS14D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SOS14R"
+                }
+            ]
+        },
+        {
+            "name": "TRES14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "TRE14D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TRE14R"
+                }
+            ]
+        },
+        {
+            "name": "SEN12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN12D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN12R"
+                }
+            ]
+        },
+        {
+            "name": "PRES12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES12D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES12R"
+                }
+            ]
+        },
+        {
+            "name": "GOV12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV12D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV12R"
+                }
+            ]
+        }
+    ],
+    "pov_party": "Democratic",
+    "metrics": {
+        "compactness": [
+            "cut_edges"
+        ],
+        "demographic": [
+            {
+                "column_tallies": "all"
+            }
+        ],
+        "partisanship": [
+            ""
+        ]
+    }
+}
