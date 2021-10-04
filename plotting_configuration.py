@@ -1,0 +1,4 @@
+DEFAULT_COLOR = "steelblue"
+LABEL_SIZE = 24
+TICK_SIZE = 12
+FIG_SIZE = (12,6)
