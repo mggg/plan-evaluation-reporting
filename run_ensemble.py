@@ -28,7 +28,7 @@ plan_type = args.map
 steps = args.n
 county_aware = args.county_aware
 county_aware_str = "county_aware" if county_aware else "neutral"
-output_dir = "{}/raw_chains".format(state)
+output_dir = "{}/{}".format(state, CHAIN_DIR)
 verbose_freq = args.verbosity
 
 with open("{}/{}.json".format(STATE_SPECS_DIR, state)) as fin:
