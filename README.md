@@ -14,11 +14,30 @@ Ensemble statistics are stored as a compressed jsonl file with the following for
 The first line is a summary object describing the ensemble: # districts, 
 district ids, the population balance, the proposal method, which metrics are tracked (their id, their prettified name string, and metric type $\in$ {`plan_wide`, `district_level`, `election_level`}), the POV party, and details about the elections used for the partisanship metrics.
 
+```json:
+{
+    "type": "ensemble_summary", 
+    "num_districts": 13, 
+    "district_ids": [1, 2, 3, ...], 
+    "epsilon": 0.01, 
+    "chain_type": "neutral", 
+    "pop_col": "TOTPOP", 
+    "metrics": [{"id": "TOTPOP", "name": "Total Population", "type": "district_level"}, {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"}, {"id": "seats", "name": "# Seats Won", "type": "election_level"},], 
+    "pov_party": "Democratic", 
+    "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"}, {"name": "Republican", "key": "GOV18R"}]},...], 
+    "party_statewide_share": {"GOV18": 0.5493898776942814, ...}
+}
+```
+
 Each sequential line describes a plan.  It has a type $\in$ {`"ensemble_plan"`, `citizen_plan`, `proposed_plan`}.  In addition it has attributes for each metric described above, where the attribute key matches the metric id, and the attribute body is the corresponding metric data.  For type `'a`: `plan_wide` metrics have type `'a`, `district_level` metrics have type {`district_id`: `'a`}, and `election_level` metrics have type {`election_name`: `'a`}.
 
 ```json
-{"type": "ensemble_summary", "num_districts": 13, "district_ids": [1, 2, 3, ...], "epsilon": 0.01, "chain_type": "neutral", "pop_col": "TOTPOP", "metrics": [{"id": "TOTPOP", "name": "Total Population", "type": "district_level"}, {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"}, {"id": "seats", "name": "# Seats Won", "type": "election_level"},], "pov_party": "Democratic", "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"}, {"name": "Republican", "key": "GOV18R"}]},...], "party_statewide_share": {"GOV18": 0.5493898776942814, ...}}
-{"type": "ensemble_plan", "TOTPOP": {"1": 774357, "2": 775422, "3": 777890, ...}, "num_competitive_districts": 16, "num_swing_districts": 3, "num_party_districts": 5, "num_op_party_districts": 5, "num_party_wins_by_district": [5, 2, 5, 5, 0, 0, 0, 5, 0, 3, 5, 3, 0], "seats": {"GOV18": 8, ...}, "num_cut_edges": 874}
+{
+    "type": "ensemble_plan", 
+    "TOTPOP": {"1": 774357, "2": 775422, "3": 777890, ...},
+    "num_cut_edges": 874,
+    "seats": {"GOV18": 8, ...}
+}
 ```
 
 ## Adding a new state:
