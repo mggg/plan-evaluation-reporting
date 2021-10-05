@@ -14,7 +14,7 @@ Ensemble statistics are stored as a compressed jsonl file with the following for
 The first line is a summary object describing the ensemble: # districts, 
 district ids, the population balance, the proposal method, which metrics are tracked (their id, their prettified name string, and metric type $\in$ {`plan_wide`, `district_level`, `election_level`}), the POV party, and details about the elections used for the partisanship metrics.
 
-```json:
+```json
 {
     "type": "ensemble_summary", 
     "num_districts": 13, 
@@ -22,9 +22,14 @@ district ids, the population balance, the proposal method, which metrics are tra
     "epsilon": 0.01, 
     "chain_type": "neutral", 
     "pop_col": "TOTPOP", 
-    "metrics": [{"id": "TOTPOP", "name": "Total Population", "type": "district_level"}, {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"}, {"id": "seats", "name": "# Seats Won", "type": "election_level"},], 
+    "metrics": [
+                    {"id": "TOTPOP", "name": "Total Population", "type": "district_level"},
+                    {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"},
+                    {"id": "seats", "name": "# Seats Won", "type": "election_level"}, ...
+                ], 
     "pov_party": "Democratic", 
-    "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"}, {"name": "Republican", "key": "GOV18R"}]},...], 
+    "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"},
+                                                   {"name": "Republican", "key": "GOV18R"}]}, ...], 
     "party_statewide_share": {"GOV18": 0.5493898776942814, ...}
 }
 ```
