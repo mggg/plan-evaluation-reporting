@@ -28,7 +28,7 @@ class PlotFactory:
         self.pop_col = summary["pop_col"]
         self.plans = [json.loads(j) for j in json_list if json.loads(j)["type"] == "ensemble_plan"]
         self.len = len(self.plans)
-        self.default_color = "#5c676f" if summary["chain_type"] == "neutral" else "#4693b3"
+        self.default_color = "#4693b3" if summary["chain_type"] == "neutral" else "#5c676f"
         self.proposal_colors = ["#f3c042", "#96b237", "#bc2f45", "#f2bbc4", "#c26d2b"]
 
         demographics = {
@@ -130,6 +130,8 @@ class PlotFactory:
         ax.hist(scores,
                 bins=hist_bins,
                 color=self.default_color,
+                rwidth=0.8,
+                edgecolor='black',
                )
         ax.get_yaxis().set_visible(False)
         return ax, bin_width
@@ -142,6 +144,7 @@ class PlotFactory:
         fig, ax = plt.subplots(figsize=figsize)
         parts = ax.violinplot(scores,
                               showextrema=False,
+#                               quantiles=[[0.01, 0.25, 0.5, 0.75, 0.99] for score_list in scores],
                              )
         for pc in parts['bodies']:
             pc.set_facecolor(self.default_color)
@@ -149,6 +152,26 @@ class PlotFactory:
             pc.set_alpha(1)
         ax.set_xticks(range(len(labels) + 1))
         ax.set_xticklabels([""] + list(labels), fontsize=TICK_SIZE)
+        return ax
+    
+    def plot_boxplot(self,
+                     scores,
+                     labels,
+                     figsize=FIG_SIZE,
+                    ):
+        fig, ax = plt.subplots(figsize=figsize)
+        boxstyle = {
+           "lw": 2,
+            "color": self.default_color,
+        }
+        ax.boxplot(scores,
+                   whis=(1,99),
+                   showfliers=False,
+                   boxprops=boxstyle,
+                   whiskerprops=boxstyle,
+                   capprops=boxstyle,
+                   medianprops=boxstyle,
+                  )
         return ax
     
     def plot_plan_score(self, 
@@ -265,28 +288,23 @@ class PlotFactory:
             for j, value in enumerate(scores):
                 sorted_districts[j+1].append(value)
         if boxplot:
-            fig, ax = plt.subplots(figsize=figsize)
-            boxstyle = {
-               "lw": 2, 
-            }
-            ax.boxplot(sorted_districts.values(),
-                       whis=(1,99),
-                       showfliers=False,
-                       boxprops=boxstyle,
-                       whiskerprops=boxstyle,
-                       capprops=boxstyle,
-                       medianprops={
-                           **boxstyle,
-                           "color":self.default_color,
-                       },
-                      )
+            ax = self.plot_boxplot(sorted_districts.values(),
+                                   sorted_districts.keys(),
+                                   figsize=FIG_SIZE,
+                                  )
         else:
             ax = self.plot_violin(sorted_districts.values(),
                                   sorted_districts.keys(),
                                   figsize=FIG_SIZE,
                                  )
-        if not raw:
+        
+        if not raw and max(sorted_districts[max(sorted_districts.keys())]) > 0.4:
             ax.set_ylim(0,1)
+            ax.axhline(0.5,
+                       color=self.default_color,
+                       alpha=1,
+                       label=f"50% {score}")
+            ax.legend()
         if hypotheticals:
             for i in range(hypotheticals):
                 rand_idx = random.randrange(0, self.len)
@@ -317,31 +335,31 @@ class PlotFactory:
             plt.close()
         return
     
-    def plot_sea_level(self,
-                      labels=True,
-                       figsize=FIG_SIZE,
-                      ):
-        seats = self.aggregate_score("seats")
+#     def plot_sea_level(self,
+#                       labels=True,
+#                        figsize=FIG_SIZE,
+#                       ):
+#         seats = self.aggregate_score("seats")
         
-        fig, ax = plt.subplots(figsize=figsize)
-        boxstyle = {
-           "lw": 2, 
-        }
-        ax.boxplot([seats[e] for e in self.election_names],
-                   whis=(1,99),
-                   showfliers=False,
-                   boxprops=boxstyle,
-                   whiskerprops=boxstyle,
-                   capprops=boxstyle,
-                   medianprops={
-                       **boxstyle,
-                       "color":self.default_color,
-                   },
-                  )
-        ax.set_ylim(0,self.num_districts)
-        ax.set_xticklabels(self.election_names, fontsize=TICK_SIZE)
-        if labels:
-            ax.set_ylabel("Democratic seats", fontsize=LABEL_SIZE)
-        return
+#         fig, ax = plt.subplots(figsize=figsize)
+#         boxstyle = {
+#            "lw": 2, 
+#         }
+#         ax.boxplot([seats[e] for e in self.election_names],
+#                    whis=(1,99),
+#                    showfliers=False,
+#                    boxprops=boxstyle,
+#                    whiskerprops=boxstyle,
+#                    capprops=boxstyle,
+#                    medianprops={
+#                        **boxstyle,
+#                        "color":self.default_color,
+#                    },
+#                   )
+#         ax.set_ylim(0,self.num_districts)
+#         ax.set_xticklabels(self.election_names, fontsize=TICK_SIZE)
+#         if labels:
+#             ax.set_ylabel("Democratic seats", fontsize=LABEL_SIZE)
+#         return
         
         
