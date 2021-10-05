@@ -1,6 +1,36 @@
 # plan-evaluation
 A set of tools and resources for evaluating and visualizing proposed districting plans.
 
+## Scripts for Ensemble Generation and Scoring Plans
+
+* `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quite can be passed via the command line.
+* `collect_scores.py`: script used to score a pre-generated chain and save the results.  Arguments: state, map_type, num_steps, --county_aware, and --verbosity can be passed via the command line.
+
+The `scripts/` directory contains bash scripts for running this code on the cluster. The `*.slurm` scripts are used with the `sbatch` command to create a new job on the HPC with the right parameters, navigate to the right directory and call the python scripts.  The `*.sh` scripts are used to kick-off multiple cluster jobs for a state across map_types and proposal method types.
+
+Raw chains are stored compressed according to the format in the [pcompress repo](https://github.com/InnovativeInventor/pcompress).
+
+Ensemble statistics are stored as a compressed jsonl file with the following format:
+The first line is a summary object describing the ensemble: # districts, 
+district ids, the population balance, the proposal method, which metrics are tracked (their id, their prettified name string, and metric type $\in$ {`plan_wide`, `district_level`, `election_level`}), the POV party, and details about the elections used for the partisanship metrics.
+
+Each sequential line describes a plan.  It has a type $\in$ {`"ensemble_plan"`, `citizen_plan`, `proposed_plan`}.  In addition it has attributes for each metric described above, where the attribute key matches the metric id, and the attribute body is the corresponding metric data.  For type `'a`: `plan_wide` metrics have type `'a`, `district_level` metrics have type {`district_id`: `'a`}, and `election_level` metrics have type {`election_name`: `'a`}.
+
+```json
+{"type": "ensemble_summary", "num_districts": 13, "district_ids": [1, 2, 3, ...], "epsilon": 0.01, "chain_type": "neutral", "pop_col": "TOTPOP", "metrics": [{"id": "TOTPOP", "name": "Total Population", "type": "district_level"}, {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"}, {"id": "seats", "name": "# Seats Won", "type": "election_level"},], "pov_party": "Democratic", "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"}, {"name": "Republican", "key": "GOV18R"}]},...], "party_statewide_share": {"GOV18": 0.5493898776942814, ...}}
+{"type": "ensemble_plan", "TOTPOP": {"1": 774357, "2": 775422, "3": 777890, ...}, "num_competitive_districts": 16, "num_swing_districts": 3, "num_party_districts": 5, "num_op_party_districts": 5, "num_party_wins_by_district": [5, 2, 5, 5, 0, 0, 0, 5, 0, 3, 5, 3, 0], "seats": {"GOV18": 8, ...}, "num_cut_edges": 874}
+```
+
+## Adding a new state:
+
+Steps for adding a new state:
+* Add its name the list of supported states in `configuration.py`
+* Create a dual graph and add it to the `dual_graphs` directory.
+* In the `state_specifications` sub-directory add `${State Name}.json`, defining properties about the state, where it's dual graph lives, what columns are in that dual graph and which metrics to track.
+* Create a directory for the state to store intermediary outputs.
+
+Once those steps are complete you should be able to run the previous scripts passing the new state as a command line argument.
+
 ## Installation
 ### Use Cases
 When installing, it's important to determine your use case: if you want to use
