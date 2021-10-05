@@ -1,6 +1,7 @@
 from plotting_configuration import *
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 import json
 import re
 
@@ -27,6 +28,8 @@ class PlotFactory:
         self.pop_col = summary["pop_col"]
         self.plans = [json.loads(j) for j in json_list if json.loads(j)["type"] == "ensemble_plan"]
         self.len = len(self.plans)
+        self.default_color = "#5c676f" if summary["chain_type"] == "neutral" else "#4693b3"
+        self.proposal_colors = ["#f3c042", "#96b237", "#bc2f45", "#f2bbc4", "#c26d2b"]
 
         demographics = {
             demo_col:{
@@ -101,7 +104,7 @@ class PlotFactory:
                 bin_width = 1
             if bin_width >= 1:
                 bin_width = int(bin_width)
-            hist_bins = np.arange(val_range[0], val_range[1] + bin_width, bin_width)
+            hist_bins = np.arange(val_range[0], val_range[1] + 2 * bin_width, bin_width)
         label_interval = max(int(len(hist_bins) / num_labels), 1)
         tick_bins = []
         tick_labels = []
@@ -112,7 +115,7 @@ class PlotFactory:
         for i, label in enumerate(tick_labels):
             if type(label) == np.float64:
                 tick_labels[i] = round(label, 2)
-        return hist_bins, tick_bins, tick_labels
+        return hist_bins, tick_bins, tick_labels, bin_width
     
     def plot_histogram(self, 
                        scores, 
@@ -121,90 +124,197 @@ class PlotFactory:
                        figsize=FIG_SIZE, 
                       ):
         fig, ax = plt.subplots(figsize=figsize)
-        hist_bins, tick_bins, tick_labels = self.get_bins_and_labels(score_range, unique_scores)
+        hist_bins, tick_bins, tick_labels, bin_width = self.get_bins_and_labels(score_range, unique_scores)
         ax.set_xticks(tick_bins)
         ax.set_xticklabels(tick_labels, fontsize=TICK_SIZE)
         ax.hist(scores,
                 bins=hist_bins,
-                color=DEFAULT_COLOR,
+                color=self.default_color,
                )
         ax.get_yaxis().set_visible(False)
+        return ax, bin_width
+    
+    def plot_violin(self,
+                    scores,
+                    labels,
+                    figsize=FIG_SIZE,
+                   ):
+        fig, ax = plt.subplots(figsize=figsize)
+        parts = ax.violinplot(scores,
+                              showextrema=False,
+                             )
+        for pc in parts['bodies']:
+            pc.set_facecolor(self.default_color)
+            pc.set_edgecolor("black")
+            pc.set_alpha(1)
+        ax.set_xticks(range(len(labels) + 1))
+        ax.set_xticklabels([""] + list(labels), fontsize=TICK_SIZE)
         return ax
     
     def plot_plan_score(self, 
                         score, 
+                        hypotheticals=False,
                         labels=True, 
                         figsize=FIG_SIZE,
+                        save=False,
                        ):
         scores = self.aggregate_score(score)
-        ax = self.plot_histogram(scores,
-                                 (min(scores), max(scores)),
-                                 set(scores),
-                                 figsize=figsize)
+        if score == "num_split_counties" or score == "num_county_pieces":
+            scores = scores[1000:]
+        ax, bin_width = self.plot_histogram(scores,
+                                            (min(scores), max(scores)),
+                                            set(scores),
+                                            figsize=figsize)
         if labels:
             ax.set_xlabel(score, fontsize=LABEL_SIZE)
+        if hypotheticals:
+            for i in range(hypotheticals):
+                rand_idx = random.randrange(0,len(scores))
+                hypothetical_score = scores[rand_idx]
+                ax.axvline(hypothetical_score + bin_width / 2,
+                           lw=5,
+                           alpha=0.8,
+                           color=self.proposal_colors[i],
+                           label=f"Plan {rand_idx}: {round(hypothetical_score, 2)}",
+                          )
+            ax.legend()
+        if save:
+            plt.savefig(f"gallery/{score}_{self.chain_type}.png", dpi=300, bbox_inches='tight')
+            plt.close()
         return
     
     def plot_election_score(self, 
                             score, 
                             election=None,
+                            hypotheticals=False,
                             labels=True, 
                             figsize=FIG_SIZE,
+                            save=False,
                            ):
         if election:
             scores = self.aggregate_score(score)[election]
-            ax = self.plot_histogram(scores,
-                                     (min(scores), max(scores)),
-                                     set(scores),
-                                     figsize=figsize,
-                                     )
+            ax, bin_width = self.plot_histogram(scores,
+                                                (min(scores), max(scores)),
+                                                set(scores),
+                                                figsize=figsize,
+                                                )
             if labels:
                 ax.set_xlabel(f"{election} {self.party} {score}", fontsize=LABEL_SIZE)
+            if hypotheticals:
+                for i in range(hypotheticals):
+                    rand_idx = random.randrange(0,self.len)
+                    hypothetical_score = scores[rand_idx]
+                    ax.axvline(hypothetical_score + bin_width / 2,
+                               lw=5,
+                               alpha=0.8,
+                               color=self.proposal_colors[i],
+                               label=f"Plan {rand_idx}: {round(hypothetical_score, 2)}",
+                              )
+                ax.legend()
         else:
             scores_by_election = self.aggregate_score(score)
-            all_scores = [score for score_list in scores_by_election.values() for score in score_list]
-            for election, scores in scores_by_election.items():
-                ax = self.plot_histogram(scores, 
-                                         (min(all_scores), max(all_scores)),
-                                         set(all_scores),
-                                         figsize=figsize, 
-                                        )
-                if labels:
-                    ax.set_xlabel(f"{election} {self.party} {score}", fontsize=LABEL_SIZE)
+            ax = self.plot_violin([scores_by_election[e] for e in self.election_names], 
+                                  self.election_names,
+                                  figsize=FIG_SIZE)
+            if labels:
+                ax.set_xlabel(f"{self.party} {score}", fontsize=LABEL_SIZE)
+            if hypotheticals:
+                for i in range(hypotheticals):
+                    rand_idx = random.randrange(0, self.len)
+                    hypothetical_scores = [scores_by_election[e][rand_idx] for e in self.election_names]
+                    for j, election in enumerate(self.election_names):
+                        ax.scatter(j+1, hypothetical_scores[j],
+                                   color=self.proposal_colors[i],
+                                   edgecolor='black',
+                                   s=100,
+                                   alpha=0.8,
+                                  )
+                        if j == 0:
+                            ax.scatter(j+1, hypothetical_scores[j],
+                                       color=self.proposal_colors[i],
+                                       edgecolor='black',
+                                       s=100,
+                                       alpha=0.8,
+                                       label=f"Plan {rand_idx}",
+                                      )
+                ax.legend()
+        if save:
+            is_election = f"_{election}" if election else "_"
+            plt.savefig(f"gallery/{score}{is_election}_{self.chain_type}.png", dpi=300, bbox_inches='tight')
+            plt.close()
         return
     
     def plot_demographics(self,
                           score,
+                          boxplot=False,
+                          raw=False,
+                          hypotheticals=False,
                           labels=True,
                           figsize=FIG_SIZE,
+                          save=False,
                          ):
         POP_COL = self.pop_col if "VAP" not in score else "VAP"
         demographics_by_district = self.aggregate_score(score)
         totpop_by_district = self.aggregate_score(POP_COL)
         sorted_districts = {d: [] for d in range(1, self.num_districts + 1)}
         for i in range(self.len):
-            scores = sorted([demographics_by_district[d][i] / totpop_by_district[d][i] for d in demographics_by_district.keys()])
+            if raw:
+                scores = sorted([demographics_by_district[d][i] for d in demographics_by_district.keys()])
+            else:
+                scores = sorted([demographics_by_district[d][i] / totpop_by_district[d][i] for d in demographics_by_district.keys()])
             for j, value in enumerate(scores):
                 sorted_districts[j+1].append(value)
-        
-        fig, ax = plt.subplots(figsize=figsize)
-        boxstyle = {
-           "lw": 2, 
-        }
-        ax.boxplot(sorted_districts.values(),
-                   whis=(1,99),
-                   showfliers=False,
-                   boxprops=boxstyle,
-                   whiskerprops=boxstyle,
-                   capprops=boxstyle,
-                   medianprops={
-                       **boxstyle,
-                       "color":DEFAULT_COLOR,
-                   },
-                  )
-        ax.set_ylim(0,1)
+        if boxplot:
+            fig, ax = plt.subplots(figsize=figsize)
+            boxstyle = {
+               "lw": 2, 
+            }
+            ax.boxplot(sorted_districts.values(),
+                       whis=(1,99),
+                       showfliers=False,
+                       boxprops=boxstyle,
+                       whiskerprops=boxstyle,
+                       capprops=boxstyle,
+                       medianprops={
+                           **boxstyle,
+                           "color":self.default_color,
+                       },
+                      )
+        else:
+            ax = self.plot_violin(sorted_districts.values(),
+                                  sorted_districts.keys(),
+                                  figsize=FIG_SIZE,
+                                 )
+        if not raw:
+            ax.set_ylim(0,1)
+        if hypotheticals:
+            for i in range(hypotheticals):
+                rand_idx = random.randrange(0, self.len)
+                hypothetical_scores = [sorted_districts[int(d)][rand_idx] for d in demographics_by_district.keys()]
+                for j, district in enumerate(demographics_by_district.keys()):
+                    ax.scatter(j+1, hypothetical_scores[j],
+                               color=self.proposal_colors[i],
+                               edgecolor='black',
+                               s=100,
+                               alpha=0.8,
+                              )
+                    if j == 0:
+                        ax.scatter(j+1, hypothetical_scores[j],
+                                   color=self.proposal_colors[i],
+                                   edgecolor='black',
+                                   s=100,
+                                   alpha=0.8,
+                                   label=f"Plan {rand_idx}",
+                                  )
+            ax.legend()
         if labels:
-            ax.set_xlabel(f"Districts sorted by {score} share", fontsize=LABEL_SIZE)
+            suffix = "" if raw else " share"
+            ax.set_xlabel(f"Districts sorted by {score}{suffix}", fontsize=LABEL_SIZE)
+        if save:
+            shape = 'boxplot' if boxplot else 'violin'
+            raw_title = 'counts' if raw else 'percents'
+            plt.savefig(f"gallery/{score}_{shape}_{raw_title}_{self.chain_type}.png", dpi=300, bbox_inches='tight')
+            plt.close()
         return
     
     def plot_sea_level(self,
@@ -225,7 +335,7 @@ class PlotFactory:
                    capprops=boxstyle,
                    medianprops={
                        **boxstyle,
-                       "color":DEFAULT_COLOR,
+                       "color":self.default_color,
                    },
                   )
         ax.set_ylim(0,self.num_districts)
