@@ -25,23 +25,26 @@ district ids, the population balance, the proposal method, which metrics are tra
     "metrics": [
                     {"id": "TOTPOP", "name": "Total Population", "type": "district_level"},
                     {"id": "num_cut_edges", "name": "# Cut Edges", "type": "plan_wide"},
-                    {"id": "seats", "name": "# Seats Won", "type": "election_level"}, ...
+                    {"id": "seats", "name": "# Seats Won", "type": "election_level"},
+                    ...
                 ], 
     "pov_party": "Democratic", 
     "elections": [{"name": "GOV18", "candidates": [{"name": "Democratic", "key": "GOV18D"},
-                                                   {"name": "Republican", "key": "GOV18R"}]}, ...], 
+                                                   {"name": "Republican", "key": "GOV18R"}]},
+                   ...], 
     "party_statewide_share": {"GOV18": 0.5493898776942814, ...}
 }
 ```
 
-Each sequential line describes a plan.  It has a type $\in$ {`"ensemble_plan"`, `citizen_plan`, `proposed_plan`}.  In addition it has attributes for each metric described above, where the attribute key matches the metric id, and the attribute body is the corresponding metric data.  For type `'a`: `plan_wide` metrics have type `'a`, `district_level` metrics have type {`district_id`: `'a`}, and `election_level` metrics have type {`election_name`: `'a`}.
+Each sequential line describes a plan.  It has a type $\in$ {`"ensemble_plan"`, `citizen_plan`, `proposed_plan`}.  In addition it has attributes for each metric described above, where the attribute key matches the metric id, and the attribute body is the corresponding metric data.  For type `'a`: `plan_wide` metrics have type `'a`, `district_level` metrics have type Map<`district_id`, `'a`>, and `election_level` metrics have type Map<`election_name`, `'a`>.
 
 ```json
 {
     "type": "ensemble_plan", 
     "TOTPOP": {"1": 774357, "2": 775422, "3": 777890, ...},
     "num_cut_edges": 874,
-    "seats": {"GOV18": 8, ...}
+    "seats": {"GOV18": 8, ...},
+    ...
 }
 ```
 
