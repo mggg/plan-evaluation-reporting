@@ -3,7 +3,7 @@
 #SBATCH --time=2-00:00:00 # days-hh:mm:ss
 #SBATCH --nodes=1 # how many computers do we need?
 #SBATCH --ntasks-per-node=1 # how many cores per node do we need?
-#SBATCH --mem=5000 # how many MB of memory do we need (5GB here)
+#SBATCH --mem=16000 # how many MB of memory do we need (16GB here)
 #SBATCH --output="/cluster/home/jmatth03/plan-evaluation/%x.%A_%a.txt" # where to save the output file.
 #SBATCH --partition=largemem #largemem #preempt # which queue to use
 
