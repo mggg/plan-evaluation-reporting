@@ -119,9 +119,9 @@
         {"id": "partisan_bias", "name": "Partisan Bias"},
         {"id": "eguia_county", "name": "Eguia Metric by County"},
         {"id": "num_swing_districts", "name": "Swing Districts"},
-        {"id": "num_competitive_districts", "name": "Competitive District"},
-        {"id": "num_party_districts", "name": "Safe Party Districts"},
-        {"id": "num_op_party_districts", "name": "Safe Opposition Party Districts"},
-        {"id": "num_party_wins_by_district", "name": "Party Wins by District"}
+        {"id": "num_competitive_districts", "name": "Competitive Districts"},
+        {"id": "num_party_districts", "name": "Safe {} Districts"},
+        {"id": "num_op_party_districts", "name": "Safe {} Districts"},
+        {"id": "num_party_wins_by_district", "name": "{} Wins by District"}
     ]
 }
