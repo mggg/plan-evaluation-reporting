@@ -4,12 +4,12 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-for st in ["mi", "wi", "va"]:
+for st in ["mi"]:
     shapes = gpd.read_file("../data/shapes_no_water_vtds/{}_vtds_overlay_water.shp".format(st))
     shapes = shapes.set_index("GEOID20").rename(columns={"COUNTYFP20": "COUNTY"})
     shapes.geometry = shapes.buffer(0)
     graph = Graph.from_geodataframe(shapes)
-    graph.to_json("{}_vtds.json".format(st))
+    graph.to_json("{}_vtds_w_pop.json".format(st))
 
 
 mi_g = Graph.from_json("michigan_vtds20.json")
@@ -52,3 +52,23 @@ mi_g.to_json("../dual_graphs/mi_vtds.json")
 nx.relabel.convert_node_labels_to_integers(mi_g, first_label=0, ordering='default', label_attribute="GEOID20").to_json("mi_vtds_0_indexed.json")
 nx.relabel.convert_node_labels_to_integers(wi_g, first_label=0, ordering='default', label_attribute="GEOID20").to_json("wi_vtds_0_indexed.json")
 nx.relabel.convert_node_labels_to_integers(va_g, first_label=0, ordering='default', label_attribute="GEOID20").to_json("va_vtds_0_indexed.json")
+
+
+wi_g = Graph.from_json("wi_vtds_w_pop.json")
+va_g = Graph.from_json("va_vtds_w_pop.json")
+mi_g = Graph.from_json("mi_vtds_w_pop.json")
+wi_g = nx.relabel.convert_node_labels_to_integers(wi_g, first_label=0, ordering='default', label_attribute="GEOID20")
+va_g = nx.relabel.convert_node_labels_to_integers(va_g, first_label=0, ordering='default', label_attribute="GEOID20")
+mi_g = nx.relabel.convert_node_labels_to_integers(mi_g, first_label=0, ordering='default', label_attribute="GEOID20")
+
+wi_g.to_json("wi_vtds_0_indexed.json")
+va_g.to_json("va_vtds_0_indexed.json")
+mi_g.to_json("mi_vtds_0_indexed.json")
+
+
+
+for st in ["ut"]:
+    shapes = gpd.read_file("/Users/jnmatthews/Dropbox/vtd-migration/products/{}_vtd20.shp".format(st.upper()))
+    shapes.geometry = shapes.buffer(0)
+    graph = Graph.from_geodataframe(shapes)
+    graph.to_json("{}_vtds20.json".format(st))
