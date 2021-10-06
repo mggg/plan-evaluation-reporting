@@ -110,18 +110,18 @@
         {"id": "OTHERVAP", "name": "OTHERVAP", "type": "col_tally"},
         {"id": "2MOREVAP", "name": "2MOREVAP", "type": "col_tally"},
         {"id": "HVAP", "name": "HVAP", "type": "col_tally"},
-        {"id": "num_cut_edges", "name": "# Cut Edges"},
-        {"id": "num_county_pieces", "name": "# Counties Pieces"},
-        {"id": "num_split_counties", "name": "# Split Counties"},
-        {"id": "seats", "name": "# Seats Won"},
+        {"id": "num_cut_edges", "name": "Cut Edges"},
+        {"id": "num_county_pieces", "name": "County Pieces"},
+        {"id": "num_split_counties", "name": "Split Counties"},
+        {"id": "seats", "name": "Seats Won"},
         {"id": "efficiency_gap", "name": "Efficiency Gap"},
         {"id": "mean_median", "name": "Mean Median"},
         {"id": "partisan_bias", "name": "Partisan Bias"},
         {"id": "eguia_county", "name": "Eguia Metric by County"},
-        {"id": "num_swing_districts", "name": "# Swing Districts"},
-        {"id": "num_competitive_districts", "name": "# Competitive District"},
-        {"id": "num_party_districts", "name": "# Districts always won by POV Party"},
-        {"id": "num_op_party_districts", "name": "# Districts always won by Opposition Party"},
-        {"id": "num_party_wins_by_district", "name": "# Party Wins by District"}
+        {"id": "num_swing_districts", "name": "Swing Districts"},
+        {"id": "num_competitive_districts", "name": "Competitive District"},
+        {"id": "num_party_districts", "name": "Safe Party Districts"},
+        {"id": "num_op_party_districts", "name": "Safe Opposition Party Districts"},
+        {"id": "num_party_wins_by_district", "name": "Party Wins by District"}
     ]
 }
