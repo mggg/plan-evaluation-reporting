@@ -157,7 +157,6 @@ class PlotFactory:
                    capprops=boxstyle,
                    medianprops=boxstyle,
                   )
-        print(plt.xticks())
         return ax
     
     def draw_arrow(self, ax, orientation):
@@ -193,6 +192,7 @@ class PlotFactory:
             ylims1 = [0,0]
             ylims2 = [ax.get_ylim()[1], ax.get_ylim()[1]]
         elif orientation == "vertical":
+            orig_ylims = ax.get_ylim()
             xlims = ax.get_xlim()
             ylims1 = [-0.08, -0.08]
             ylims2 = [0.08, 0.08]
@@ -205,6 +205,7 @@ class PlotFactory:
                        )
         if orientation == "vertical":
             ax.set_xlim(xlims)
+            ax.set_ylim(orig_ylims)
         else:
             ax.set_xlim(orig_xlims)
         ax.legend()
@@ -232,14 +233,16 @@ class PlotFactory:
                                                     figsize=figsize,
                                                    )
                 self.draw_arrow(ax, "horizontal")
-                self.add_ideal_band(ax, "horizontal")
+                if score == "efficiency_gap":
+                    self.add_ideal_band(ax, "horizontal")
             else:
                 ax = self.plot_violin([scores[e] for e in self.election_names], 
                                       self.election_names,
                                       figsize=FIG_SIZE,
                                      )
                 self.draw_arrow(ax, "vertical")
-                self.add_ideal_band(ax, "vertical")
+                if score == "efficiency_gap":
+                    self.add_ideal_band(ax, "vertical")
         elif self.metrics[score]["type"] == "district_level":
             POP_COL = self.pop_col if "VAP" not in score else "VAP"
             totpop_by_district = self.aggregate_score(POP_COL)
