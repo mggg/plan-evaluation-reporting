@@ -28,6 +28,7 @@ class PlotFactory:
         self.districts = list(map(lambda x: str(x), summary["district_ids"])) # ints or strs?
         self.epsilon = summary["epsilon"]
         self.chain_type = summary["chain_type"]
+        self.map_type = plan_type
         self.pop_col = summary["pop_col"]
         self.plans = [json.loads(j) for j in json_list if json.loads(j)["type"] == "ensemble_plan"]
         self.len = len(self.plans)
@@ -291,6 +292,6 @@ class PlotFactory:
             e = f"_{election}" if election else ""
             b = "_boxplot" if boxplot else ""
             r = "_raw" if raw else ""
-            filename = f"{score}{e}{b}{r}_{self.chain_type}"
+            filename = f"{self.map_type}_{score}{e}{b}{r}_{self.chain_type}"
             plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
         return
