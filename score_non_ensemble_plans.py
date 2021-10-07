@@ -66,14 +66,13 @@ graph = Graph.from_json(dual_graph_file)
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
                      county_col=county_col, demographic_cols=demographic_cols)
 
-
 if proposed_dirs != []:
     with open(f"{STATE}/plan_stats/{PLAN_TYPE}_proposed_plans.jsonl", "w") as fout:
         print(json.dumps(scores.summary_data(elections, num_districts=k, ensemble=False)), file=fout)
         plans = reduce(lambda acc, proposed_dir: acc + glob(f"{proposed_dir}/*.csv"), proposed_dirs, [])
         for plan_path in tqdm(plans):
             name = plan_path.split("/")[-1].split(".csv")[0]
-            plan = pd.read_csv(plan_path, header=None,  index_col=0).to_dict()[1]
+            plan = pd.read_csv(plan_path, dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
             ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
             part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
             print(json.dumps(scores.plan_summary(part, plan_type="proposed_plan", 
@@ -84,7 +83,7 @@ if citizen_dirs != []:
         print(json.dumps(scores.summary_data(elections, num_districts=k, ensemble=False)), file=fout)
         plans = reduce(lambda acc, citizen_dir: acc + glob(f"{citizen_dir}/*.csv"), citizen_dirs, [])
         for plan_path in tqdm(plans):
-            plan = pd.read_csv(plan_path, header=None,  index_col=0).to_dict()[1]
+            plan = pd.read_csv(plan_path, dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
             ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
             part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
             print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan")), file=fout)
