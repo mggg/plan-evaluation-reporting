@@ -26,11 +26,9 @@ class PlanMetrics:
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
     
-    def summary_data(self, elections, districts, epsilon=None, method=None, ensemble=True):
+    def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
         header = {
                 "type": "ensemble_summary" if ensemble else "summary",
-                "num_districts": len(districts),
-                "district_ids": list(districts),
                 "pop_col": self.pop_col,
                 "metrics": self.metrics,
                 "pov_party": self.party,
@@ -39,7 +37,12 @@ class PlanMetrics:
                 }
         if ensemble:
             header["epsilon"] = epsilon
-            header["chain_type"] = method,
+            header["chain_type"] = method
+            header["district_ids"] = list(districts)
+            header["num_districts"] = len(districts)
+        else:
+            header["num_districts"] = num_districts
+
         
         return header
 
