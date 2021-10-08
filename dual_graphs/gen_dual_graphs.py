@@ -72,3 +72,40 @@ for st in ["ut"]:
     shapes.geometry = shapes.buffer(0)
     graph = Graph.from_geodataframe(shapes)
     graph.to_json("{}_vtds20.json".format(st))
+
+
+## Add new VA data
+
+elects = ['PRES2020D', 'PRES2020R',  'USSEN2020D', 'USSEN2020R', 'USSEN18D', 'USSEN18R',
+          'AG17D', 'AG17R', 'GOV17D', 'GOV17R', 'LTGOV17D', 'LTGOV17R', 'PRES16D', 'PRES16R',
+          'AG13D', 'AG13R', 'GOV13D', 'GOV13R', 'LTGOV13D', 'LTGOV13R', 'PRES12D', 'PRES12R']
+
+Ne
+
+"""
+PRES20
+SEN20
+SEN18*
+AG17*
+GOV17*
+LTG17*
+PRES16*
+AG13
+GOV13
+LTG13
+PRES12
+"""
+
+va_g = Graph.from_json("va_vtds_w_pop.json")
+
+pos = lambda g: {n: (float(g.nodes()[n]["INTPTLON20"]), float(g.nodes()[n]["INTPTLAT20"])) for n in g.nodes()}
+nx.draw(va_g, pos=pos(va_g), node_size=1)
+
+va_data = gpd.read_file("/Users/jnmatthews/Downloads/va_vtd.zip")
+va_election_data =va_data.set_index("GEOID20")[elects]
+
+# plt.savefig("va_dual_graph.png", dpi=200)
+
+va_g.add_data(va_election_data)
+va_g = nx.relabel.convert_node_labels_to_integers(va_g, first_label=0, ordering='default', label_attribute="GEOID20")
+va_g.to_json("va_vtds_0_indexed_election_day_votes.json")
