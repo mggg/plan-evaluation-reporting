@@ -20,33 +20,46 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "va_vtds_0_indexed.json",
+    "dual_graph": "va_vtds_0_indexed_election_day_votes.json",
     "pop_col": "TOTPOP20",
     "county_col": "COUNTY",
     "elections": [
+        {
+            "name": "PRES20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES2020D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES2020R"
+                }
+            ]
+        },
+        {
+            "name": "SEN20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "USSEN2020D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "USSEN2020R"
+                }
+            ]
+        },
         {
             "name": "SEN18",
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G18DSEN"
+                    "key": "USSEN18D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G18RSEN"
-                }
-            ]
-        },
-        {
-            "name": "USH18",
-            "candidates": [
-                {
-                    "name": "Democratic",
-                    "key": "G18DHOR"
-                },
-                {
-                    "name": "Republican",
-                    "key": "G18RHOR"
+                    "key": "USSEN18R"
                 }
             ]
         },
@@ -55,24 +68,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G17DGOV"
+                    "key": "GOV17D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G17RGOV"
-                }
-            ]
-        },
-        {
-            "name": "HOD17",
-            "candidates": [
-                {
-                    "name": "Democratic",
-                    "key": "G17DHOD"
-                },
-                {
-                    "name": "Republican",
-                    "key": "G17RHOD"
+                    "key": "GOV17R"
                 }
             ]
         },
@@ -81,11 +81,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G17DATG"
+                    "key": "AG17D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G17RATG"
+                    "key": "AG17R"
                 }
             ]
         },
@@ -94,11 +94,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G17DLTG"
+                    "key": "LTGOV17D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G17RLTG"
+                    "key": "LTGOV17R"
                 }
             ]
         },
@@ -107,24 +107,63 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G16DPRS"
+                    "key": "PRES16D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G16RPRS"
+                    "key": "PRES16R"
                 }
             ]
         },
         {
-            "name": "USH16",
+            "name": "GOV13",
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "G16DHOR"
+                    "key": "GOV13D"
                 },
                 {
                     "name": "Republican",
-                    "key": "G16RHOR"
+                    "key": "GOV13R"
+                }
+            ]
+        },
+        {
+            "name": "ATG13",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG13D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG13R"
+                }
+            ]
+        },
+        {
+            "name": "LTG13",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "LTGOV13D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "LTGOV13R"
+                }
+            ]
+        },
+        {
+            "name": "PRES12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES12D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES12R"
                 }
             ]
         }
