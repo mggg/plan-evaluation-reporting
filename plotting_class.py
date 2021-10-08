@@ -15,8 +15,8 @@ def sort_elections(elec_list):
 class PlotFactory:
     def __init__(self, state, plan_type, eps, steps, method):
         
-        self.ensemble_folder = f"/Users/gabe/Dropbox/PlanAnalysis/ensemble_analysis/ensemble_stats_7_10_2021"
-        self.proposed_folder = f"/Users/gabe/Downloads/proposed"
+        self.ensemble_folder = f"/Users/gabe/Dropbox/PlanAnalysis/ensemble_analysis/va_8_10_2021"
+        self.proposed_folder = f"{state}/plan_stats"
 
         with gzip.open(f"{self.ensemble_folder}/{state.lower()}_{plan_type}_{eps}_bal_{steps}_steps_{method}.jsonl.gz", "rb") as fin:
             ensemble_list = list(fin)
@@ -243,7 +243,8 @@ class PlotFactory:
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
-                    ax.scatter(i + 1,
+                    jitter = random.uniform(-1/10, 1/10) if proposed_scores[i].count(s) > 1 else 0
+                    ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposal_colors[j],
                                 edgecolor='black',
