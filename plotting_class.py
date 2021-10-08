@@ -149,7 +149,8 @@ class PlotFactory:
                )
         if proposed_scores:
             for i, s in enumerate(proposed_scores):
-                ax.axvline(s + bin_width / 2,
+                jitter = random.uniform(-bin_width/5, bin_width/5) if proposed_scores.count(s) > 1 else 0
+                ax.axvline(s + bin_width / 2 + jitter,
                            color=self.proposal_colors[i],
                            lw=2,
                            label=f"{self.proposed_names[i]}: {round(s,2)}",
@@ -186,11 +187,13 @@ class PlotFactory:
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
-                    ax.scatter(i + 1,
+                    jitter = random.uniform(-1/10, 1/10) if proposed_scores[i].count(s) > 1 else 0
+                    ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposal_colors[j],
                                 edgecolor='black',
                                 s=100,
+                                alpha=0.9,
                                 label=self.proposed_names[j] if i == 0 else None,
                                 )
             ax.legend()
@@ -210,6 +213,11 @@ class PlotFactory:
                     lw=4,
                     label='proportionality',
                     )
+            ax.axhline(0.5*self.num_districts,
+                       color=self.default_color,
+                       alpha=0.5, 
+                       label="50%",
+                      )
             ax.legend()
         return ax
     
