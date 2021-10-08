@@ -1,9 +1,8 @@
-
 from setuptools import setup
 
 requirements = [
     "pandas", "scipy", "networkx", "geopandas", "shapely", "matplotlib",
-    "gerrychain"
+    "gerrychain", "pcompress"
 ]
 
 setup(
@@ -11,7 +10,7 @@ setup(
     author="MGGG Redistricting Lab",
     author_email="contact@mggg.org",
     description="Evaluate and visualize districting plans.",
-    url="https://github.com/mggg/plan-evaluation",
+    url="https://github.com/mggg/plan-evaluation-reporting",
     packages=["plan_evaluation"],
     install_requires=requirements
 )

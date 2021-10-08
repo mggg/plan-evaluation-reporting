@@ -1,10 +1,9 @@
 from functools import reduce
-import networkx as nx
 import numpy as np
 import warnings
-from gerrychain import Partition, updaters, metrics
+from gerrychain import Partition
 from gerrychain.updaters import Tally
-from configuration import SUPPORTED_MAP_TYPES
+from .configuration import SUPPORTED_MAP_TYPES
 
 class PlanMetrics:
     DEMO_COLS = ['TOTPOP', 'WHITE', 'BLACK', 'AMIN', 'ASIAN', 'NHPI', 'OTHER', '2MORE', 'HISP',

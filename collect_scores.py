@@ -1,5 +1,3 @@
-from os import stat
-from plan_metrics import PlanMetrics
 from gerrychain import Graph, Election
 from gerrychain.updaters import Tally
 from tqdm import tqdm
@@ -8,7 +6,8 @@ import argparse
 import json
 import gzip
 import warnings
-from configuration import *
+from plan_evaluation import PlanMetrics
+from plan_evaluation.configuration import *
 
 SUPPORTED_METRIC_IDS = list(SUPPORTED_METRICS.keys())
 

@@ -5,7 +5,7 @@ from gerrychain.proposals import ReCom
 from pcompress import Record
 from functools import partial
 import warnings
-from region_aware import *
+from .region_aware import *
 
 class ChainRecorder:
     def __init__(self, graph, output_dir, pop_col, county_col=None, verbose_freq=None) -> None:

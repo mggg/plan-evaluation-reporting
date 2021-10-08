@@ -1,8 +1,8 @@
 from gerrychain import Graph
-from record_chains import ChainRecorder
 import argparse
 import json
-from configuration import *
+from plan_evaluation import ChainRecorder
+from plan_evaluation.configuration import *
 
 
 parser = argparse.ArgumentParser(description="VTD Ensemble Recorder", 
