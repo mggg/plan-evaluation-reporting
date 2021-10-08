@@ -36,7 +36,6 @@ with open("{}/{}.json".format(STATE_SPECS_DIR, STATE)) as fin:
     state_specification = json.load(fin)
 
 k = state_specification["districts"][PLAN_TYPE]
-eps = state_specification["epsilons"][PLAN_TYPE]
 dual_graph_file = "{}/{}".format(DUAL_GRAPH_DIR, state_specification["dual_graph"])
 pop_col = state_specification["pop_col"]
 county_col = state_specification["county_col"]
