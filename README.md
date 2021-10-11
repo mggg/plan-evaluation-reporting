@@ -3,7 +3,7 @@ A set of tools and resources for evaluating and visualizing proposed districting
 
 ## Scripts for Ensemble Generation and Scoring Plans
 
-* `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quite can be passed via the command line.
+* `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quiet can be passed via the command line.
 * `collect_scores.py`: script used to score a pre-generated chain and save the results.  Arguments: state, map_type, num_steps, --county_aware, and --verbosity can be passed via the command line.
 
 The `scripts/` directory contains bash scripts for running this code on the cluster. The `*.slurm` scripts are used with the `sbatch` command to create a new job on the HPC with the right parameters, navigate to the right directory and call the python scripts.  The `*.sh` scripts are used to kick-off multiple cluster jobs for a state across map_types and proposal method types.
