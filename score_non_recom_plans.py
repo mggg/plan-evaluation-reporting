@@ -72,10 +72,10 @@ scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updat
 
 if DROPBOX:
     output_path_proposed = f"{HOMEDIR}/Dropbox/PlanAnalysis/proposed_plans/{STATE}/{PLAN_TYPE}/proposed_plans.jsonl"
+    output_path_citizen = f"{STATE}/plan_stats/{STATE.lower()}_{PLAN_TYPE}_citizen_plans.jsonl"
 else:
     output_path_proposed = f"{STATE}/plan_stats/{PLAN_TYPE}_proposed_plans.jsonl"
-
-output_path_citizen = f"{STATE}/plan_stats/{PLAN_TYPE}_citizen_plans.jsonl"
+    output_path_citizen = f"{STATE}/plan_stats/{PLAN_TYPE}_citizen_plans.jsonl"
 
 if proposed_dirs != []:
     with open(output_path_proposed, "w") as fout:
@@ -92,10 +92,15 @@ if proposed_dirs != []:
 if citizen_paths != []:
     with open(output_path_citizen, "w") as fout:
         print(json.dumps(scores.summary_data(elections, num_districts=k, ensemble=False)), file=fout)
-        for citizen_ens in tqdm(citizen_paths):
-            plans = pd.read_csv(citizen_ens, dtype={"GEOID20": "str"}).set_index("GEOID20").astype(int).to_dict()
-            
-            for plan_id, plan in plans.items():
-                ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
+        citizen_ens = reduce(lambda acc, citizen_ens: pd.merge(left=acc, right=citizen_ens, on="GEOID20"),
+                            [pd.read_csv(citizen_ens, dtype={"GEOID20": "str"}).set_index("GEOID20") 
+                                for citizen_ens in citizen_paths])
+        
+        plans = citizen_ens.to_dict()
+        for plan_id, plan in tqdm(plans.items()):
+            try:
+                ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
                 part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
                 print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan")), file=fout)
+            except:
+                pass
