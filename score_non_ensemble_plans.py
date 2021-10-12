@@ -9,8 +9,10 @@ import warnings
 from configuration import *
 from glob import glob
 from functools import reduce
+import os
 
 SUPPORTED_METRIC_IDS = list(SUPPORTED_METRICS.keys())
+HOMEDIR = os.path.expanduser('~')
 
 parser = argparse.ArgumentParser(description="VTD Plan Scorer", 
                                  prog="score_non_ensemble_plans.py")
@@ -22,14 +24,17 @@ parser.add_argument("map", metavar="map", type=str,
                     help="the map to redistrict")
 parser.add_argument("--proposed_plan_dirs", type=str, nargs="*", metavar="proposed plan directory",
                     help="list of directories with proposed plan CSVs", default=[])
-parser.add_argument("--citizen_plans_dirs", type=str, nargs="*", metavar="citzen plan directory",
-                    help="list of directories with citizen plan CSVs", default=[])
+parser.add_argument("--citizen_plans_files", type=str, nargs="*", metavar="citzen plan files",
+                    help="list of files with citizen plan CSVs", default=[])
+parser.add_argument("--dropbox", action="store_const", const=True, default=False, 
+                    help="Save the output files to dropbox folder? (default: save in this repo)")
 args = parser.parse_args()
 
 STATE = args.st
 PLAN_TYPE = args.map
+DROPBOX = args.dropbox
 proposed_dirs = args.proposed_plan_dirs
-citizen_dirs = args.citizen_plans_dirs
+citizen_paths = args.citizen_plans_files
 
 
 with open("{}/{}.json".format(STATE_SPECS_DIR, STATE)) as fin:
@@ -65,8 +70,15 @@ graph = Graph.from_json(dual_graph_file)
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
                      county_col=county_col, demographic_cols=demographic_cols)
 
+if DROPBOX:
+    output_path_proposed = f"{HOMEDIR}/Dropbox/PlanAnalysis/proposed_plans/{STATE}/{PLAN_TYPE}/proposed_plans.jsonl"
+else:
+    output_path_proposed = f"{STATE}/plan_stats/{PLAN_TYPE}_proposed_plans.jsonl"
+
+output_path_citizen = f"{STATE}/plan_stats/{PLAN_TYPE}_citizen_plans.jsonl"
+
 if proposed_dirs != []:
-    with open(f"{STATE}/plan_stats/{PLAN_TYPE}_proposed_plans.jsonl", "w") as fout:
+    with open(output_path_proposed, "w") as fout:
         print(json.dumps(scores.summary_data(elections, num_districts=k, ensemble=False)), file=fout)
         plans = reduce(lambda acc, proposed_dir: acc + glob(f"{proposed_dir}/*.csv"), proposed_dirs, [])
         for plan_path in tqdm(plans):
@@ -77,12 +89,13 @@ if proposed_dirs != []:
             print(json.dumps(scores.plan_summary(part, plan_type="proposed_plan", 
                                             plan_name=name)), file=fout)
 
-if citizen_dirs != []:
-    with open(f"{STATE}/plan_stats/{PLAN_TYPE}_citizen_plans.jsonl", "w") as fout:
+if citizen_paths != []:
+    with open(output_path_citizen, "w") as fout:
         print(json.dumps(scores.summary_data(elections, num_districts=k, ensemble=False)), file=fout)
-        plans = reduce(lambda acc, citizen_dir: acc + glob(f"{citizen_dir}/*.csv"), citizen_dirs, [])
-        for plan_path in tqdm(plans):
-            plan = pd.read_csv(plan_path, dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
-            ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
-            part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
-            print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan")), file=fout)
+        for citizen_ens in tqdm(citizen_paths):
+            plans = pd.read_csv(citizen_ens, dtype={"GEOID20": "str"}).set_index("GEOID20").astype(int).to_dict()
+            
+            for plan_id, plan in plans.items():
+                ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
+                part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
+                print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan")), file=fout)

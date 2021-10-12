@@ -1,5 +1,4 @@
 from functools import reduce
-import networkx as nx
 import numpy as np
 import warnings
 from gerrychain import Partition, updaters, metrics
