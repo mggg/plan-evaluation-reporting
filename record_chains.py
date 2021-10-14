@@ -56,4 +56,4 @@ class ChainRecorder:
 
         for i, part in  enumerate(Record(chain, "{}/{}".format(self.output_dir, file_name))):
             if self.verbose_freq is not None and i % self.verbose_freq == self.verbose_freq - 1:
-                print("*", end="")
+                print("*", end="", flush=True)
