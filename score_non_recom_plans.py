@@ -101,6 +101,6 @@ if citizen_paths != []:
             try:
                 ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
                 part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
-                print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan")), file=fout)
+                print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
             except:
                 pass

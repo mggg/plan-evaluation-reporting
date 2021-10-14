@@ -126,4 +126,6 @@ class PlanMetrics:
         }
         if plan_type == "proposed_plan":
             plan_metrics["name"] = plan_name
+        if plan_type == "citizen_plan":
+            plan_metrics["plan_id"] = plan_name
         return plan_metrics
