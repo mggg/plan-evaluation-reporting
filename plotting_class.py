@@ -8,24 +8,29 @@ import re
 import os
 
 def sort_elections(elec_list):
+    """
+    Helper function to sort elections chronologically for plotting. Assumes the last two characters
+    in the election name are the year, e.g. "SEN18"
+    """
     tuplified_elecs = list(map(lambda x: re.findall(r"[^\W\d_]+|\d+",x), elec_list))
     sorted_tuples = sorted(tuplified_elecs, key=lambda x: x[1])
     return [tup[0] + tup[1] for tup in sorted_tuples]
 
 class PlotFactory:
-    def __init__(self, 
-                 state, 
-                 plan_type, 
-                 eps, 
-                 steps, 
-                 method, 
-                 ensemble_dir=None,
-                 citizen_dir=None,
-                 proposed_plans_file=None,
-                 ):
-        
-        # make these parameters, ensemble_folder = None (if None, use JN's json, otherwise use path)
-        # make a Dropbox relative path parameter, default to "~/Dropbox"
+    def __init__(self, state, plan_type, steps=100000, method="county_aware", ensemble_dir=None, citizen_dir=None, proposed_plans_file=None, output_dir=None):
+        """
+        The PlotFactory class is initialized with the state and plan type (congress, state_senate, or state_house). By default, we will
+        look for ensembles, citizen ensembles, and proposed plans in the PlanAnalysis Dropbox directory, but users can specify their own (local)
+        directories for each, if needed. The class stores a list of scores for each kind of plan (ensemble, citizen, proposed), with an
+        empty list if there is no citizen ensemble or proposed plan jsonl. If we end up saving the plots, they will be saved by default in the 
+        {state}/plans folder in the plan-evaluation-reporting GitHub repo, but we could specify an alternate output directory.
+        """
+        if plan_type == "congress":
+            eps = 0.01
+        elif plan_type == "state_senate":
+            eps = 0.02
+        elif plan_type == "state_house":
+            eps = 0.05
         HOMEDIR = os.path.expanduser("~")
         with open(f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/ensemble_paths.json") as fin:
             dropbox_default_paths = json.load(fin)
@@ -38,6 +43,8 @@ class PlotFactory:
             citizen_dir = f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/{citizen_subdir}"
         if proposed_plans_file is None:
             proposed_plans = f"{HOMEDIR}/Dropbox/PlanAnalysis/proposed_plans/{state}/{plan_type}/proposed_plans.jsonl"
+        if output_dir is None:
+            output_dir = f"{state}/plots"
 
         with gzip.open(f"{ensemble_dir}/{state.lower()}_{plan_type}_{eps}_bal_{steps}_steps_{method}.jsonl.gz", "rb") as fe:
             ensemble_list = list(fe)
@@ -48,18 +55,19 @@ class PlotFactory:
                             "type": metric["type"],
                         } for metric in ensemble_summary["metrics"]
                         }
+        
+        citizen_list = []
         if os.path.exists(citizen_dir):
-            with open(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl", "rb") as fc:
-                citizen_list = list(fc)
-        else:
-            citizen_list = []
+            if os.path.exists(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl"):
+                with open(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl", "rb") as fc:
+                    citizen_list = list(fc)
         self.citizen_plans = [json.loads(j) for j in citizen_list if json.loads(j)["type"] == "citizen_plan"]
 
+        proposed_list = []
         if os.path.exists(proposed_plans):
             with open(proposed_plans, "rb") as fp:
                 proposed_list = list(fp)
-        else:
-            proposed_list = []
+
         self.proposed_plans = [json.loads(j) for j in proposed_list if json.loads(j)["type"] == "proposed_plan"]
         self.proposed_names = [proposed_plan["name"] for proposed_plan in self.proposed_plans]
 
@@ -77,17 +85,16 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8ca1c5", "#f2bbc4", "#c26d2b"]
+        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#c26d2b", "#f2bbc4", "#8cd1c5"]
         self.citizen_color = "#4693b3"
-        self.output_folder = f"{state}/plots"
+        self.output_folder = output_dir
         
 
     def aggregate_score(self, score, kind="ensemble"):
         """
-        Cycle through the plans and aggregate together the specified score.
-        If the score is by plan, this will return a simple list as long as the chain. If the score is
-        by district or by election, we'll return a dictionary with keys as districts or elections, values
-        being the list of scores as long as the chain.
+        Cycle through the plans (either ensemble, citizen, or proposed) and aggregate together the specified score. 
+        If the score is by plan, this will return a simple list as long as the chain. If the score is by district or 
+        by election, we'll return a dictionary with keys as districts or elections, values being the list of scores as long as the chain.
         """
         if score not in self.ensemble_metrics.keys():
             raise ValueError(f"Score '{score}' is not in self.ensemble_metrics: {list(self.ensemble_metrics.keys())}")
@@ -103,10 +110,11 @@ class PlotFactory:
                 for e in aggregation.keys():
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
-            aggregation = {district: [] for district in plans[0][score].keys()}
+            aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for plan in plans:
                 for district in aggregation.keys():
-                    aggregation[district].append(plan[score][district])
+                    plan_district = str(int(district)-1) if kind == "citizen" else district
+                    aggregation[district].append(plan[score][plan_district])
         return aggregation
     
     def get_bins_and_labels(self, val_range, unique_vals,num_labels=8):
@@ -148,29 +156,33 @@ class PlotFactory:
                     tick_labels[i] = round(label, 2)
         return hist_bins, tick_bins, tick_labels, bin_width
     
-    def plot_histogram(self, ax, kind, score, scores, proposed_scores):
+    def plot_histogram(self, ax, score, scores):
         """
         Plot a histogram with the ensemble scores in bins and the proposed plans' scores as vertical lines.
         If there are many unique values, use a white border on the bins to distinguish, otherwise reduce the
         bin width to 80%.
         """
-        score_range = (min(scores + proposed_scores), max(scores + proposed_scores))
-        hist_bins, tick_bins, tick_labels, bin_width = self.get_bins_and_labels(score_range, set(scores + proposed_scores)) # did this set mess anything up...
+        all_scores = scores["ensemble"] + scores["citizen"] + scores["proposed"]
+        score_range = (min(all_scores), max(all_scores))
+        hist_bins, tick_bins, tick_labels, bin_width = self.get_bins_and_labels(score_range, set(all_scores))
         ax.set_xticks(tick_bins)
         ax.set_xticklabels(tick_labels, fontsize=TICK_SIZE)
         rwidth    = 0.8     if len(set(scores)) < 20 else 1
         edgecolor = "black" if len(set(scores)) < 20 else "white"
-        ax.hist(scores,
-                bins=hist_bins,
-                color=self.default_color if kind == "ensemble" else self.citizen_color,
-                rwidth=rwidth,
-                edgecolor=edgecolor,
-                # alpha=0.5,
-                density=True,
-               )
-        if proposed_scores:
-            for i, s in enumerate(proposed_scores):
-                jitter = random.uniform(-bin_width/5, bin_width/5) if proposed_scores.count(s) > 1 else 0
+        alpha = 0.7 if scores["ensemble"] and scores["citizen"] else 1
+        for kind in ["ensemble", "citizen"]:
+            if scores[kind]:
+                ax.hist(scores[kind],
+                        bins=hist_bins,
+                        color=self.default_color if kind == "ensemble" else self.citizen_color,
+                        rwidth=rwidth,
+                        edgecolor=edgecolor,
+                        alpha=alpha,
+                        density=True,
+                    )
+        if scores["proposed"]:
+            for i, s in enumerate(scores["proposed"]):
+                jitter = random.uniform(-bin_width/5, bin_width/5) if scores["proposed"].count(s) > 1 else 0
                 ax.axvline(s + bin_width / 2 + jitter,
                            color=self.proposed_colors[i],
                            lw=2,
@@ -187,15 +199,15 @@ class PlotFactory:
     def plot_violin(self, ax, kind, score, scores, proposed_scores, labels):
         """
         Plot a violin plot, which takes `scores` — a list of lists, where each sublist will be its own violin.
-        Trim each sublist to only the values between the 1-99th percentile, to match our boxplits.
+        Proposed scores will be plotted as colored circles on their respective violin.
+        Color the violins conditioned on the kind of the scores (ensemble or citizen), and if plotting ensemble, then
+        trim each sublist to only the values between the 1-99th percentile, to match our boxplits (otherwise don't trim).
         """
         trimmed_scores = []
         for score_list in scores:
-            low = np.percentile(score_list, 1)
-            high = np.percentile(score_list, 99)
+            low = np.percentile(score_list, 1 if kind=="ensemble" else 0)
+            high = np.percentile(score_list, 99 if kind=="ensemble" else 100)
             # print(f"Only including scores between [{low}, {high}]")
-            # low = np.percentile(score_list, 0)
-            # high = np.percentile(score_list, 100)
             trimmed_scores.append([s for s in score_list if s >= low and s <= high])
         parts = ax.violinplot(trimmed_scores, showextrema=False)
         for pc in parts['bodies']:
@@ -210,7 +222,8 @@ class PlotFactory:
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
-                    jitter = random.uniform(-1/10, 1/10) if proposed_scores[i].count(s) > 1 else 0
+                    # horizontally jitter proposed scores regardless of whether there are multiple scores at the same height
+                    jitter = random.uniform(-1/10, 1/10) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
@@ -222,6 +235,7 @@ class PlotFactory:
             ax.legend()
         if score == "efficiency_gap":
             self.add_ideal_band(ax, "vertical")
+        # for the seats plot, add a 50% marker and proportionality bands on each election
         if score == "seats":
             for i, e in enumerate(self.election_names):
                 proportional = self.statewide_share[e]*self.num_districts
@@ -229,13 +243,8 @@ class PlotFactory:
                         [proportional, proportional],
                         color='lightblue',
                         lw=4,
+                        label='proportionality' if i == 0 else None,
                         )
-            ax.plot([i+1-0.25, i+1+0.25,],
-                    [proportional, proportional],
-                    color='lightblue',
-                    lw=4,
-                    label='proportionality',
-                    )
             ax.axhline(0.5*self.num_districts,
                        color=self.default_color,
                        alpha=0.5, 
@@ -246,9 +255,9 @@ class PlotFactory:
     
     def plot_boxplot(self, ax, kind, score, scores, proposed_scores, labels):
         """
-        Plot boxplots, which takes `scores` — a list of lists, where each sublist will be its own boxplot.
-        The whiskers from each box will extend to the 1st and 99th percentiles of the data.
-        TODO: labels aren't used here, but they are for the violins. should we standardize?
+        This works the same as the violin plots, but plots boxplots instead of violins.
+        Even though `score` is not used, the arguments are kept the same so that the two methods can
+        be called with the same arguments.
         """
         boxstyle = {
            "lw": 2,
@@ -265,7 +274,7 @@ class PlotFactory:
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
-                    jitter = random.uniform(-1/6, 1/6) if proposed_scores[i].count(s) > 1 else 0
+                    jitter = random.uniform(-1/4, 1/4) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
@@ -281,7 +290,9 @@ class PlotFactory:
     def draw_arrow(self, ax, orientation):
         """
         For some partisan metrics, we want to draw an arrow showing where the POV-party's advantage is.
-        TODO: make arrow placement smarter, it doesn't work so well right now.
+        Depending on the orientation of the scores (histograms have scores arranged horizontally, violinplots
+        have scores arranged vertically), we either place the arrow at the bottom left, pointing rightward,
+        or in the middle of the y-axis, pointing up.
         """
         if orientation == "horizontal":
             x = ax.get_xlim()[0]
@@ -293,8 +304,7 @@ class PlotFactory:
             y = sum(ax.get_ylim())/2
             ha = "center"
             rotation = 90
-        ax.text(x, 
-                y,
+        ax.text(x, y,
                 f"{self.party[:3]}. advantage",
                 ha=ha,
                 va="center",
@@ -337,23 +347,32 @@ class PlotFactory:
         ax.legend()
         return
 
-    def save_fig(self, score, election, boxplot, raw, save):
+    def save_fig(self, kinds, score, election, boxplot, raw, save):
+        """
+        If `save`, save the figure in the output folder specified in __init__(), named
+        according to the score and what kinds of plans are plotted.
+        """
         if not save:
             return
         os.makedirs(self.output_folder, exist_ok=True)
         e = f"_{election}" if election else ""
         b = "_boxplot" if boxplot else ""
         r = "_raw" if raw else ""
-        filename = f"{self.map_type}_{score}{e}{b}{r}_{self.chain_type}"
+        kinds = "_".join(kinds)
+        filename = f"{self.map_type}_{score}{e}{b}{r}_{kinds}"
         plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
         plt.close()
         return
 
-    def resort_populations(self, score, scores, raw, plan_type="ensemble"):
+    def resort_populations(self, score, scores, raw, kind="ensemble"):
+        """
+        Helper function for demographic boxplots.
+        TODO: set out a `self.vap_col`, otherwise if the VAP column is, say, "VAP20", this will fail.
+        """
         POP_COL = self.pop_col if "VAP" not in score else "VAP" # HARDCODED TO MI
-        totpop = self.aggregate_score(POP_COL, type=plan_type)
+        totpop = self.aggregate_score(POP_COL, kind=kind)
         sorted_districts = {d: [] for d in range(1, self.num_districts + 1)}
-        num_plans = len(self.ensemble_plans) if plan_type == "ensemble" else len(self.proposed_plans)
+        num_plans = len(getattr(self, f"{kind}_plans"))
         for i in range(num_plans):
             if raw:
                 sorted_scores = sorted([scores[d][i] for d in scores.keys()])
@@ -369,6 +388,9 @@ class PlotFactory:
         return result, labels
 
     def label_ax(self, ax, score, election):
+        """
+        Helper function to label the x-axis according to the score we're plotting.
+        """
         label = self.ensemble_metrics[score]["name"]
         if score == "num_party_districts":
             label = label.format(self.party)
@@ -386,6 +408,7 @@ class PlotFactory:
     def sea_level_plot(self, labels=True, save=False, figsize=FIG_SIZE):
         """
         Make WI-style `sea-level` plot with each proposed plan over each election, compared to the proportional outcome.
+        TODO: this might fail right now — need to test it with new score format.
         """
         proportional_share = [self.statewide_share[e] for e in self.election_names]
         seats_by_plan = [[self.proposed[i]["seats"][e] / self.num_districts for e in self.election_names] for i in range(len(self.proposed))]
@@ -417,52 +440,64 @@ class PlotFactory:
             plt.close()
         return ax
 
-    def plot(self, score, election=None, boxplot=False, raw=False, labels=True, save=False, with_proposed=True, kinds=["ensemble"]):
-        fig, ax = plt.subplots(len(kinds), figsize=(12, 6*len(kinds)), sharex=False)
-        for i, plan_kind in enumerate(kinds):
-            this_ax = ax if len(kinds) == 1 else ax[i]
-            scores = self.aggregate_score(score, kind=plan_kind)
-            proposed_scores = self.aggregate_score(score, kind="proposed")
-            this_ax = self.fill_ax(this_ax, score, scores, proposed_scores, plan_kind, election, boxplot, raw, labels)
-        plt.show()
+    def plot(self, score, election=None, boxplot=False, raw=False, labels=True, save=False, kinds=["ensemble"]):
+        """
+        Driver function to actually plot a score. `scores` is a dictionary where the keys are the kinds of plans and the values
+        are the aggregated scores across that kind of plan, with an empty list if we haven't specified that we want those kinds.
+        We then call the `.fill_ax()` method to actually plot the scores, and then optionally save the figure.
+        """
+        _, ax = plt.subplots(figsize=FIG_SIZE)
+        scores = {kind:self.aggregate_score(score, kind=kind) if kind in kinds else [] for kind in ["ensemble", "citizen", "proposed"]}
+        ax = self.fill_ax(ax, kinds, score, scores, election, boxplot, raw, labels)
+        self.save_fig(kinds, score, election, boxplot, raw, save)
         return
 
     
-    def fill_ax(self, ax, score, scores, proposed_scores, kind, election, boxplot, raw, labels):
+    def fill_ax(self, ax, kinds, score, scores, election, boxplot, raw, labels):
+        """
+        If your score is by election, you can either not specify an election to get a violinplot of the score over all elections, or 
+        choose an election to plot your score as a histogram. If the score is by district (like a demographic group), you can either 
+        choose to plot a violinplot (default) or set boxplot=True to get boxplots. Setting raw=True will show demographic groups as 
+        counts instead of percents.
+
+        For all plots, x-axis labels are True, and the plot won't save by default. Lastly, you can choose what kinds of plans
+        to plot: for histograms, setting kinds = ["ensemble", "citizen", "proposed"] will plot the ensemble and citizen plans on top
+        of each other as histograms, with the proposed plans overlaid as vertical lines. For violinplots and boxplots, only the first
+        plan kind listed in `kinds` will be plotted as a violin or a box, with "proposed" plans listed as colored circles if "proposed"
+        is in `kinds`.
+        """
         if self.ensemble_metrics[score]["type"] == "plan_wide":
-            if kind == "ensemble" and (score == "num_split_counties" or score == "num_county_pieces"):
-                scores = scores[1000:]
+            if score == "num_split_counties" or score == "num_county_pieces":
+                scores["ensemble"] = scores["ensemble"][1000:]
             ax = self.plot_histogram(ax,
-                                     kind,
                                      score,
                                      scores,
-                                     proposed_scores,
                                     )
         elif self.ensemble_metrics[score]["type"] == "election_level":
             if election:
+                scores = {kind:scores[kind][election] if scores[kind] else [] for kind in scores.keys()}
                 ax = self.plot_histogram(ax,
-                                         kind,
                                          score,
-                                         scores[election],
-                                         proposed_scores[election] if proposed_scores else [],
+                                         scores,
                                         )
             else:
                 ax = self.plot_violin(ax,
-                                      kind,
+                                      kinds[0],
                                       score,
-                                      [scores[e] for e in self.election_names], 
-                                      [proposed_scores[e] for e in self.election_names] if proposed_scores else [],
+                                      [scores[kinds[0]][e] for e in self.election_names], 
+                                      [scores["proposed"][e] for e in self.election_names] if scores["proposed"] else [],
                                       self.election_names,
                                      )
         elif self.ensemble_metrics[score]["type"] == "district_level":
-            sorted_scores, labels = self.resort_populations(score, scores, raw, plan_type="ensemble")
-            sorted_proposed_scores, labels = self.resort_populations(score, proposed_scores, raw, plan_type="proposed") if proposed_scores else []
+            # scores = {kind:scores[kind][election] if scores[kind] else [] for kind in scores.keys()}
+            sorted_scores, labels = self.resort_populations(score, scores[kinds[0]], raw, kind=kinds[0])
+            sorted_proposed_scores, _ = self.resort_populations(score, scores["proposed"], raw, kind="proposed") if scores["proposed"] else [], []
             plotting_func = getattr(self, "plot_boxplot" if boxplot else "plot_violin")
             ax = plotting_func(ax,
-                               kind, 
+                               kinds[0], 
                                score,
                                sorted_scores,
-                               sorted_proposed_scores,
+                               sorted_proposed_scores[0], # TODO: figure out why we need to index here, seems weird...
                                labels,
                               )
             if not raw and max(sorted_scores[-1]) > 0.4:
@@ -470,9 +505,8 @@ class PlotFactory:
                 ax.axhline(0.5,
                            color=self.default_color,
                            alpha=1,
-                           label=f"50% {self.metrics[score]['name']}")
+                           label=f"50% {self.ensemble_metrics[score]['name']}")
                 ax.legend()
         if labels:
             ax = self.label_ax(ax, score, election)
-        # self.save_fig(score, election, boxplot, raw, save)
         return ax
