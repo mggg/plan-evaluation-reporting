@@ -2,9 +2,7 @@ from plotting_class import *
 
 
 print("Loading house jsonl...")
-house = PlotFactory("Michigan", "state_house", output_dir="Michigan/plots1013")
-# print("loading congress jsonl...")
-# congress = PlotFactory("Michigan", "congress", 0.01, 100000, "county_aware")
+house = PlotFactory("Michigan", "state_house")
 
 kind_types = [["ensemble", "proposed"]]#, ["citizen", "proposed"]]
 
