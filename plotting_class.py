@@ -367,9 +367,9 @@ class PlotFactory:
     def resort_populations(self, score, scores, raw, kind="ensemble"):
         """
         Helper function for demographic boxplots.
-        TODO: set out a `self.vap_col`, otherwise if the VAP column is, say, "VAP20", this will fail.
         """
-        POP_COL = self.pop_col if "VAP" not in score else "VAP" # HARDCODED TO MI
+        VAP_COL = "VAP20" if "VAP20" in self.ensemble_metrics.keys() else "VAP"
+        POP_COL = self.pop_col if "VAP" not in score else vap_col
         totpop = self.aggregate_score(POP_COL, kind=kind)
         sorted_districts = {d: [] for d in range(1, self.num_districts + 1)}
         num_plans = len(getattr(self, f"{kind}_plans"))
