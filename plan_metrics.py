@@ -17,7 +17,7 @@ class PlanMetrics:
         self.elections = elections
         self.pop_col = pop_col
         self.party = party
-        self.county_part = Partition(self.graph, self.county_column, 
+        self.county_part = Partition(self.graph, self.county_column,
                                      updaters={"population": Tally(self.pop_col, alias="population"), **updaters})
         self.metrics = state_metrics
         self.metric_ids = set([m["id"] for m in state_metrics])
@@ -25,7 +25,7 @@ class PlanMetrics:
         self.demographic_cols = demographic_cols
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
-    
+
     def summary_data(self, elections, districts, epsilon, method):
         return {
                 "type": "ensemble_summary",

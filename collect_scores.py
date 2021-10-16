@@ -9,6 +9,7 @@ import json
 import gzip
 import warnings
 from configuration import *
+from coi_updater import coi_updater
 
 SUPPORTED_METRIC_IDS = list(SUPPORTED_METRICS.keys())
 
@@ -76,11 +77,24 @@ demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col i
 
 graph = Graph.from_json(dual_graph_file)
 
+totpop = sum([graph.nodes[x][pop_col] for x in graph.nodes])
+coi_updaters = {}
+if state_specification.get("cois"):
+    cluster_sizes = {}
+    cluster_pops = [x for x in graph.nodes[0].keys() if "cluster" in x and "_pop" in x]
+
+    for cluster_pop_col in cluster_pops:
+        coi_updaters[cluster_pop_col] = Tally(cluster_pop_col)
+        cluster_sizes[cluster_pop_col] = sum([graph.nodes[x][cluster_pop_col] for x in graph.nodes])
+    coi_updaters["coi_metrics"] = coi_updater(cluster_pops, cluster_sizes, totpop)
+    demographic_cols.append("coi_metrics")
+
+
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
                      county_col=county_col, demographic_cols=demographic_cols)
 
 with gzip.open(output_path, "wt") as fout:
-    plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters})
+    plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters, **coi_updaters})
     part = next(plan_generator)
 
     header = json.dumps(scores.summary_data(elections, part.parts.keys(), eps, method)) + "\n"

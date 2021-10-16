@@ -20,7 +20,8 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "mi_vtds_0_indexed.json",
+    "dual_graph": "mi_vtds_0_indexed_cois.json",
+    "cois": true,
     "pop_col": "TOTPOP",
     "county_col": "COUNTY",
     "elections": [
