@@ -1,4 +1,3 @@
-from os import stat
 from plan_metrics import PlanMetrics
 from gerrychain import Graph, Election
 from gerrychain.updaters import Tally

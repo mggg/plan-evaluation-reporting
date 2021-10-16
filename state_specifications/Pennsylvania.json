@@ -1,0 +1,218 @@
+{
+    "name": "Pennsylvania",
+    "postal": "PA",
+    "plan_types": [
+        "congress",
+        "state_house",
+        "state_senate"
+    ],
+    "districts": {
+        "congress": 17,
+        "state_senate": 50,
+        "state_house": 203
+    },
+    "epsilons": {
+        "congress": 0.01,
+        "state_senate": 0.02,
+        "state_house": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "pa_vtds20.json",
+    "pop_col": "TOTPOP20",
+    "county_col": "COUNTYFP20",
+    "elections": [
+        {
+            "name": "GOV14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV14D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV14R"
+                }
+            ]
+        },
+        {
+            "name": "AG16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG16R"
+                }
+            ]
+        },
+        {
+            "name": "SEN16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN16R"
+                }
+            ]
+        },
+        {
+            "name": "PRES16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES16R"
+                }
+            ]
+        },
+        {
+            "name": "AUD16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AUD16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AUD16R"
+                }
+            ]
+        },
+        {
+            "name": "TRES16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "TRES16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TRES16R"
+                }
+            ]
+        },
+        {
+            "name": "GOV18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV18R"
+                }
+            ]
+        },
+        {
+            "name": "SEN18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN18R"
+                }
+            ]
+        },
+        {
+            "name": "PRES20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES20R"
+                }
+            ]
+        },
+        {
+            "name": "TRES20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "TRES20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TRES20R"
+                }
+            ]
+        },
+        {
+            "name": "AUD20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AUD20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AUD20R"
+                }
+            ]
+        },
+        {
+            "name": "AG20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG20R"
+                }
+            ]
+        }
+    ],
+    "pov_party": "Democratic",
+    "metrics": [
+        {"id": "TOTPOP20", "name": "TOTPOP", "type": "col_tally"},
+        {"id": "WPOP20", "name": "WPOP", "type": "col_tally"},
+        {"id": "BPOP20", "name": "BPOP", "type": "col_tally"},
+        {"id": "AMINPOP20", "name": "AMINPOP", "type": "col_tally"},
+        {"id": "ASIANPOP20", "name": "ASIANPOP", "type": "col_tally"},
+        {"id": "NHPIPOP20", "name": "NHPIPOP", "type": "col_tally"},
+        {"id": "OTHERPOP20", "name": "OTHERPOP", "type": "col_tally"},
+        {"id": "2MOREPOP20", "name": "2MOREPOP", "type": "col_tally"},
+        {"id": "HISP20", "name": "HPOP", "type": "col_tally"},
+        {"id": "VAP20", "name": "VAP", "type": "col_tally"},
+        {"id": "WVAP20", "name": "WVAP", "type": "col_tally"},
+        {"id": "BVAP20", "name": "BVAP", "type": "col_tally"},
+        {"id": "AMINVAP20", "name": "AMINVAP", "type": "col_tally"},
+        {"id": "ASIANVAP20", "name": "ASIANVAP", "type": "col_tally"},
+        {"id": "NHPIVAP20", "name": "NHPIVAP", "type": "col_tally"},
+        {"id": "OTHERVAP20", "name": "OTHERVAP", "type": "col_tally"},
+        {"id": "2MOREVAP20", "name": "2MOREVAP", "type": "col_tally"},
+        {"id": "HVAP20", "name": "HVAP", "type": "col_tally"},
+        {"id": "num_cut_edges", "name": "Cut Edges"},
+        {"id": "num_county_pieces", "name": "County Pieces"},
+        {"id": "num_split_counties", "name": "Split Counties"},
+        {"id": "seats", "name": "Seats Won"},
+        {"id": "efficiency_gap", "name": "Efficiency Gap"},
+        {"id": "mean_median", "name": "Mean Median"},
+        {"id": "partisan_bias", "name": "Partisan Bias"},
+        {"id": "eguia_county", "name": "Eguia Metric by County"},
+        {"id": "num_swing_districts", "name": "Swing Districts"},
+        {"id": "num_competitive_districts", "name": "Competitive Districts"},
+        {"id": "num_party_districts", "name": "Safe {} Districts"},
+        {"id": "num_op_party_districts", "name": "Safe {} Districts"},
+        {"id": "num_party_wins_by_district", "name": "{} Wins by District"}
+    ]
+}
