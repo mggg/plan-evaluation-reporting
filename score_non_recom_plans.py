@@ -10,6 +10,7 @@ from configuration import *
 from glob import glob
 from functools import reduce
 import os
+from coi_updater import coi_updater
 
 SUPPORTED_METRIC_IDS = list(SUPPORTED_METRICS.keys())
 HOMEDIR = os.path.expanduser('~')
@@ -67,6 +68,18 @@ demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col i
 
 graph = Graph.from_json(dual_graph_file)
 
+totpop = sum([graph.nodes[x][pop_col] for x in graph.nodes])
+coi_updaters = {}
+if state_specification.get("cois"):
+    cluster_sizes = {}
+    cluster_pops = [x for x in graph.nodes[0].keys() if "cluster" in x and "_pop" in x]
+
+    for cluster_pop_col in cluster_pops:
+        coi_updaters[cluster_pop_col] = Tally(cluster_pop_col)
+        cluster_sizes[cluster_pop_col] = sum([graph.nodes[x][cluster_pop_col] for x in graph.nodes])
+    coi_updaters["coi_metrics"] = coi_updater(cluster_pops, cluster_sizes, totpop)
+    demographic_cols.append("coi_metrics")
+
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
                      county_col=county_col, demographic_cols=demographic_cols)
 
@@ -85,7 +98,7 @@ if proposed_dirs != []:
             name = plan_path.split("/")[-1].split(".csv")[0]
             plan = pd.read_csv(plan_path, dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
             ddict = {n: plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
-            part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
+            part = Partition(graph, ddict, {**election_updaters, **demographic_updaters, **coi_updaters})
             print(json.dumps(scores.plan_summary(part, plan_type="proposed_plan", 
                                             plan_name=name)), file=fout)
 
@@ -100,7 +113,7 @@ if citizen_paths != []:
         for plan_id, plan in tqdm(plans.items()):
             try:
                 ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
-                part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
+                part = Partition(graph, ddict, {**election_updaters, **demographic_updaters, **coi_updaters})
                 print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
             except:
                 pass
