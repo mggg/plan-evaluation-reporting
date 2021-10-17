@@ -1,4 +1,8 @@
 def coi_updater(cluster_pops, cluster_sizes, totpop):
+    """
+    Returns a closure that will calculate the COI score given a list of 
+    cluster population columns, sizes of clusters, and totpop
+    """
     def updater(partition):
         ideal_pop = totpop / len(partition)
         district_cluster_pops = [max(partition[cluster].values()) for cluster in cluster_pops]
