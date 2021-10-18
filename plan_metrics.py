@@ -24,8 +24,8 @@ class PlanMetrics:
         self.demographic_cols = demographic_cols
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
-    
-    def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
+
+    def summary_data(self, elections, districts=[], num_districts=0, epsilon=None, method=None, ensemble=True):
         header = {
                 "type": "ensemble_summary" if ensemble else "summary",
                 "pop_col": self.pop_col,
