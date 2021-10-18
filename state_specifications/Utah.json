@@ -4,17 +4,20 @@
     "plan_types": [
         "congress",
         "state_house",
-        "state_senate"
+        "state_senate",
+        "school_districts"
     ],
     "districts": {
         "congress": 4,
         "state_senate": 29,
-        "state_house": 75
+        "state_house": 75,
+        "school_districts": 15
     },
     "epsilons": {
         "congress": 0.01,
         "state_senate": 0.02,
-        "state_house": 0.05
+        "state_house": 0.05,
+        "school_districts": 0.02
     },
     "chain_types": [
         "neutral",
