@@ -5,19 +5,19 @@
         "congress",
         "state_house",
         "state_senate",
-        "school_districts"
+        "school_board"
     ],
     "districts": {
         "congress": 4,
         "state_senate": 29,
         "state_house": 75,
-        "school_districts": 15
+        "school_board": 15
     },
     "epsilons": {
         "congress": 0.01,
         "state_senate": 0.02,
         "state_house": 0.05,
-        "school_districts": 0.02
+        "school_board": 0.02
     },
     "chain_types": [
         "neutral",

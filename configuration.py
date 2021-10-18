@@ -1,6 +1,6 @@
 ## Constants
 SUPPORTED_STATES = ["Michigan", "Virginia", "Wisconsin", "Utah", "Utah_blocks", "Pennsylvania"]
-SUPPORTED_PLAN_TYPES = ["congress", "state_senate", "state_house", "school_districts"]
+SUPPORTED_PLAN_TYPES = ["congress", "state_senate", "state_house", "school_board"]
 
 DUAL_GRAPH_DIR = "dual_graphs"
 STATE_SPECS_DIR = "state_specifications"
