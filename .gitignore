@@ -2,3 +2,7 @@
 __pycache__/
 *.egg-info/
 .vscode/
+/data
+/chains
+/scratch
+/waterless_dualgraphs
