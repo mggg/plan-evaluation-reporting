@@ -37,10 +37,6 @@
                 {
                     "name": "Republican",
                     "key": "GOV16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "GOV16TP"
                 }
             ]
         },
@@ -54,10 +50,6 @@
                 {
                     "name": "Republican",
                     "key": "SEN16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "SEN16TP"
                 }
             ]
         },
@@ -71,10 +63,6 @@
                 {
                     "name": "Republican",
                     "key": "PRES16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "GOV16TP"
                 }
             ]
         },
@@ -88,10 +76,6 @@
                 {
                     "name": "Republican",
                     "key": "ATG16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "ATG16TP"
                 }
             ]
         },
@@ -105,10 +89,6 @@
                 {
                     "name": "Republican",
                     "key": "AUD16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "AUD16TP"
                 }
             ]
         },
@@ -122,10 +102,6 @@
                 {
                     "name": "Republican",
                     "key": "TRE16R"
-                },
-                {
-                    "name": "ThirdParty",
-                    "key": "TRE16TP"
                 }
             ]
         },
