@@ -3,7 +3,7 @@ A set of tools and resources for evaluating and visualizing proposed districting
 
 ## Scripts for Ensemble Generation and Scoring Plans
 
-* `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quite can be passed via the command line.
+* `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quiet can be passed via the command line.
 * `collect_scores.py`: script used to score a pre-generated chain and save the results.  Arguments: state, map_type, num_steps, --county_aware, and --verbosity can be passed via the command line.
 * `score_non_ensemble_plans.py` script use to generate/save scoring metrics for proposed and citizen ensemble plans, from the assignment files in the passed directories.  Arguments: state, map_type, --proposed_plan_dirs, and --citizen_plans_dirs can be passed via the command line.
 
