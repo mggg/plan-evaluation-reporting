@@ -1,5 +1,4 @@
 from functools import reduce
-import networkx as nx
 import numpy as np
 import warnings
 from gerrychain import Partition, updaters, metrics
@@ -26,19 +25,25 @@ class PlanMetrics:
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
     
-    def summary_data(self, elections, districts, epsilon, method):
-        return {
-                "type": "ensemble_summary",
-                "num_districts": len(districts),
-                "district_ids": list(districts),
-                "epsilon": epsilon,
-                "chain_type": method,
+    def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
+        header = {
+                "type": "ensemble_summary" if ensemble else "summary",
                 "pop_col": self.pop_col,
                 "metrics": self.metrics,
                 "pov_party": self.party,
                 "elections": elections,
                 "party_statewide_share": {self.county_part[e].election.name: self.county_part[e].percent(self.party) for e in self.elections}
                 }
+        if ensemble:
+            header["epsilon"] = epsilon
+            header["chain_type"] = method
+            header["district_ids"] = list(districts)
+            header["num_districts"] = len(districts)
+        else:
+            header["num_districts"] = num_districts
+
+        
+        return header
 
     def county_split_details(self,part):
         """
@@ -104,7 +109,7 @@ class PlanMetrics:
 
         return election_metrics
 
-    def plan_summary(self, plan, plan_type="ensemble_plan"):
+    def plan_summary(self, plan, plan_type="ensemble_plan", plan_name=""):
         """
         Returns Json object with the metrics for the passed plan.
         `plan_type` specifies what type of plan the passed plan is.  Should be one of
@@ -113,9 +118,14 @@ class PlanMetrics:
         if plan_type not in SUPPORTED_MAP_TYPES:
             warnings.warn("Plan type ({}) is not one of the supported plan types: {}".format(plan_type, str(SUPPORTED_MAP_TYPES)))
 
-        return {
+        plan_metrics = {
             "type": plan_type,
             **self.demographic_metrics(plan),
             **self.partisan_metrics(plan),
             **self.compactness_metrics(plan)
         }
+        if plan_type == "proposed_plan":
+            plan_metrics["name"] = plan_name
+        if plan_type == "citizen_plan":
+            plan_metrics["plan_id"] = plan_name
+        return plan_metrics
