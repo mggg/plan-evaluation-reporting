@@ -39,6 +39,11 @@ eps = state_specification["epsilons"][plan_type]
 dual_graph_file = "{}/{}".format(DUAL_GRAPH_DIR, state_specification["dual_graph"])
 pop_col = state_specification["pop_col"]
 county_col = state_specification["county_col"]
+if "seed_plan" in state_specification and plan_type in state_specification["seed_plan"]:
+    seed_plan = state_specification["seed_plan"][plan_type] 
+    print("seeded")
+else:
+    seed_plan = None
 
 
 ## Run and Record Chain
@@ -47,4 +52,4 @@ rec = ChainRecorder(graph, output_dir, pop_col, county_col, verbose_freq=verbose
 
 rec.record_chain(k, eps, steps,"{}_{}_{}_bal_{}_steps_{}.chain".format(state.lower(), plan_type,
                                                                        eps, steps, county_aware_str),
-                         county_aware=county_aware)
+                         county_aware=county_aware, initial_partition=seed_plan)
