@@ -19,7 +19,6 @@ class ChainRecorder:
         self.tot_pop = sum([graph.nodes()[n][pop_col] for n in graph.nodes()])
         self.updaters = {"population": Tally(pop_col, alias="population")}
 
-
     def _initial_partition(self, num_districts, epsilon):
         ideal_pop = self.tot_pop / num_districts
         cddict = recursive_tree_part(self.graph, range(num_districts), ideal_pop, self.pop_col,
@@ -40,6 +39,10 @@ class ChainRecorder:
                                         first_check_division=True))
         else:
             return ReCom(self.pop_col, ideal_pop, epsilon)
+
+    def get_partition(self, ddict):
+        part = Partition(self.graph, assignment=ddict, updaters=self.updaters)
+        return part
 
     def record_chain(self, num_districts, epsilon, steps, file_name, county_aware=False,
                      initial_partition=None):
