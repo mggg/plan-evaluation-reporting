@@ -62,6 +62,97 @@
                     "key": "PRES16R"
                 }
             ]
+        },
+        {
+            "name": "SEN18",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SEN18D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SEN18R"
+                }
+            ]
+        },
+        {
+            "name": "PRES20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "PRES20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "PRES20R"
+                }
+            ]
+        },
+        {
+            "name": "GOV20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GOV20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GOV20R"
+                }
+            ]
+        },
+        {
+            "name": "AG20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG20D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG20R"
+                }
+            ]
+        },
+        {
+            "name": "AG16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AG16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AG16R"
+                }
+            ]
+        },
+        {
+            "name": "AUD16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AUD16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "AUD16R"
+                }
+            ]
+        },
+        {
+            "name": "TRE16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "TRE16D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TRE16R"
+                }
+            ]
         }
     ],
     "pov_party": "Democratic",
