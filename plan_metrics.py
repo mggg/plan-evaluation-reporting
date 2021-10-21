@@ -12,12 +12,10 @@ class PlanMetrics:
     def __init__(self, graph, elections, party, pop_col, state_metrics, county_col="COUNTY", 
                  demographic_cols=DEMO_COLS, updaters={}, municipality_col=None) -> None:
         self.graph = graph
-        self.county_column = county_col
-        self.municipality_col = municipality_col
         self.elections = elections
         self.pop_col = pop_col
         self.party = party
-        self.county_part = Partition(self.graph, self.county_column, 
+        self.county_part = Partition(self.graph, county_col, 
                                      updaters={"population": Tally(self.pop_col, alias="population"), **updaters})
         self.metrics = state_metrics
         self.metric_ids = set([m["id"] for m in state_metrics])
@@ -27,8 +25,16 @@ class PlanMetrics:
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
         if self.compute_municipal_details:
-            self.municipalities = set([self.graph.nodes()[n][self.municipality_col] for n in self.graph.nodes()]) - set('99999')
-            self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if self.graph.nodes[n][self.municipality_col] == municipality] for municipality in self.municipalities}
+            self._municipal_precomputation(municipality_col)
+            
+    
+    def _municipal_precomputation(self, municipality_col):
+        municipalities = set()
+        for n in self.graph.nodes():
+            muni = self.graph.nodes()[n][municipality_col]
+            municipalities.update(muni) if type(muni) == list else municipalities.add(muni)
+        self.municipalities = municipalities - set(['99999'])
+        self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if self.graph.nodes[n][municipality_col] == municipality] for municipality in self.municipalities}
     
     def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
         header = {

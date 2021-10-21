@@ -26,6 +26,7 @@
     "dual_graph": "ut_vtds20.json",
     "pop_col": "TOTPOP",
     "county_col": "COUNTYFP20",
+    "municipal_col": "MuniFIPS",
     "elections": [
         {
             "name": "GOV16",
@@ -181,6 +182,8 @@
         {"id": "num_cut_edges", "name": "Cut Edges"},
         {"id": "num_county_pieces", "name": "County Pieces"},
         {"id": "num_split_counties", "name": "Split Counties"},
+        {"id": "num_municipal_pieces", "name": "Municipal Pieces"},
+        {"id": "num_split_municipalities", "name": "Split Municipalities"},
         {"id": "seats", "name": "Seats Won"},
         {"id": "efficiency_gap", "name": "Efficiency Gap"},
         {"id": "mean_median", "name": "Mean Median"},
