@@ -34,7 +34,8 @@ class PlanMetrics:
             muni = self.graph.nodes()[n][municipality_col]
             municipalities.update(muni) if type(muni) == list else municipalities.add(muni)
         self.municipalities = municipalities - set(['99999'])
-        self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if self.graph.nodes[n][municipality_col] == municipality] for municipality in self.municipalities}
+        node_in_muni = lambda muni, node_data: node_data == muni or muni in node_data
+        self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if node_in_muni(municipality, self.graph.nodes[n][municipality_col])] for municipality in self.municipalities}
     
     def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
         header = {
