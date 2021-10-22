@@ -96,7 +96,7 @@ class PlanMetrics:
         county_results = np.array([self.county_part[e].won(self.party, c) for c in counties])
         county_pops = np.array([self.county_part["population"][c] for c in counties])
         ideal = np.dot(county_results, county_pops) / county_pops.sum()
-        return ideal - seat_share
+        return seat_share - ideal
 
     def partisan_metrics(self, part):
         election_metrics = {}
