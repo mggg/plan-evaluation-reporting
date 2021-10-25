@@ -131,18 +131,31 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            # new_score = score
+            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-0) if kind == "proposed" or kind == "citizen" else district
+                    plan_district = str(int(district)-1) if kind == "proposed" and i == 2 else district #or kind == "citizen" else district
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
+                        # if kind == "proposed":
+                        #     print(i, plan[new_score].keys())
                     except:
                         print(i, plan[new_score].keys())
                         raise ValueError
         return aggregation
+
+    def summarize(self, score):
+        scores = self.aggregate_score(score)
+        if type(scores) is dict:
+            new_scores = []
+            for l in scores.values():
+                new_scores += l
+            scores = new_scores
+        print(f"Mean {score}: {np.mean(scores):.3f}")
+        print(f"Median {score}: {np.median(scores):.3f}")
+        return
     
     def get_bins_and_labels(self, val_range, unique_vals,num_labels=8):
         """
