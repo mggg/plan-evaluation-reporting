@@ -81,8 +81,7 @@ scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updat
 with gzip.open(output_path, "wt") as fout:
     plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters})
     part = next(plan_generator)
-
-    header = json.dumps(scores.summary_data(elections, part.parts.keys(), eps, method)) + "\n"
+    header = json.dumps(scores.summary_data(elections, districts=part.parts.keys(), epsilon=eps, method=method)) + "\n"
     plan_details = json.dumps(scores.plan_summary(part)) + "\n"
     fout.write(header)
     fout.write(plan_details)

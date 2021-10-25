@@ -1,4 +1,5 @@
 from gerrychain import Graph
+import pandas as pd
 from record_chains import ChainRecorder
 import argparse
 import json
@@ -41,10 +42,20 @@ pop_col = state_specification["pop_col"]
 county_col = state_specification["county_col"]
 
 
+
 ## Run and Record Chain
 graph = Graph.from_json(dual_graph_file)
 rec = ChainRecorder(graph, output_dir, pop_col, county_col, verbose_freq=verbose_freq)
 
+if "seed_plans" in state_specification and plan_type in state_specification["seed_plans"]:
+    seed_plan_path = state_specification["seed_plans"][plan_type] 
+    seed_plan = pd.read_csv(f"seed_plans/{seed_plan_path}", dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
+    ddict = {n: seed_plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
+    init_part = rec.get_partition(ddict)
+    print("seeded")
+else:
+    seed_plan = None
+
 rec.record_chain(k, eps, steps,"{}_{}_{}_bal_{}_steps_{}.chain".format(state.lower(), plan_type,
                                                                        eps, steps, county_aware_str),
-                         county_aware=county_aware)
+                         county_aware=county_aware, initial_partition=init_part)
