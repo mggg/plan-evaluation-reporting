@@ -17,7 +17,7 @@ def sort_elections(elec_list):
     return [tup[0] + tup[1] for tup in sorted_tuples]
 
 class PlotFactory:
-    def __init__(self, state, plan_type, steps=100000, method="county_aware", ensemble_dir=None, citizen_dir=None, proposed_plans_file=None, output_dir=None):
+    def __init__(self, state, plan_type, steps=100000, method="county_aware", ensemble_dir=None, citizen_dir=None, proposed_plans_file=None, output_dir=None, proposed_winnow=[]):
         """
         The PlotFactory class is initialized with the state and plan type (congress, state_senate, or state_house). By default, we will
         look for ensembles, citizen ensembles, and proposed plans in the PlanAnalysis Dropbox directory, but users can specify their own (local)
@@ -52,6 +52,16 @@ class PlotFactory:
             ensemble_list = list(fe)
         ensemble_summary = json.loads(ensemble_list[0])
         self.ensemble_plans = [json.loads(j) for j in ensemble_list if json.loads(j)["type"] == "ensemble_plan"]
+        def get_maxpopdev(plan):
+            totpop = plan["TOTPOP"]
+            population = sum(totpop.values())
+            ideal_pop = population / len(totpop)
+            devs = []
+            for pop in totpop.values():
+                devs.append(abs(pop - ideal_pop))
+            return max(devs)
+        # self.ensemble_plans = [plan for plan in self.ensemble_plans if get_maxpopdev(plan) < 500]
+        # print(f"Winnowed ensemble plans to {len(self.ensemble_plans)}")
         self.ensemble_metrics = {metric["id"]: {
                             "name": metric["name"],
                             "type": metric["type"],
@@ -64,6 +74,7 @@ class PlotFactory:
                 with open(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl", "rb") as fc:
                     citizen_list = list(fc)
         self.citizen_plans = [json.loads(j) for j in citizen_list if json.loads(j)["type"] == "citizen_plan"]
+        # del self.citizen_plans[4]
 
         proposed_list = []
         if os.path.exists(proposed_plans):
@@ -71,7 +82,7 @@ class PlotFactory:
                 proposed_list = list(fp)
             proposed_summary = json.loads(proposed_list[0])
             self.proposed_election_names = sort_elections(election["name"] for election in proposed_summary["elections"])
-        self.proposed_plans = [json.loads(j) for j in proposed_list if json.loads(j)["type"] == "proposed_plan"]
+        self.proposed_plans = [json.loads(j) for j in proposed_list if json.loads(j)["type"] == "proposed_plan" and json.loads(j)["name"] not in proposed_winnow]
         self.proposed_names = [proposed_plan["name"] for proposed_plan in self.proposed_plans]
 
         self.party = ensemble_summary["pov_party"]
@@ -88,7 +99,11 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#c26d2b", "#f2bbc4", "#8cd1c5"]
+        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4"]
+        # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
+        # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
+        # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
+        # self.proposed_colors = ["purple", "orange", "green"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
@@ -103,6 +118,7 @@ class PlotFactory:
             raise ValueError(f"Score '{score}' is not in self.ensemble_metrics: {list(self.ensemble_metrics.keys())}")
         
         plans = getattr(self, f"{kind}_plans")
+
         elections = self.election_names if kind=="ensemble" or kind=="citizen" else self.proposed_election_names
         if self.ensemble_metrics[score]["type"] == "plan_wide":
             aggregation = []
@@ -115,13 +131,17 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            # new_score = score + "20" if kind == "proposed" else score
-            new_score = score
+            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            # new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
-            for plan in plans:
+            for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-1) if kind == "citizen" else district
-                    aggregation[district].append(plan[new_score][plan_district])
+                    plan_district = str(int(district)-0) if kind == "proposed" or kind == "citizen" else district
+                    try:
+                        aggregation[district].append(plan[new_score][plan_district])
+                    except:
+                        print(i, plan[new_score].keys())
+                        raise ValueError
         return aggregation
     
     def get_bins_and_labels(self, val_range, unique_vals,num_labels=8):
@@ -197,7 +217,7 @@ class PlotFactory:
                           )
             ax.legend()
         if self.ensemble_metrics[score]["type"] == "election_level":
-            self.draw_arrow(ax, "horizontal")
+            self.draw_arrow(ax, score, "horizontal")
         if score == "efficiency_gap":
             self.add_ideal_band(ax, "horizontal")
         ax.get_yaxis().set_visible(False)
@@ -225,7 +245,7 @@ class PlotFactory:
         ax.set_xticklabels(list(labels), fontsize=TICK_SIZE)
         ax.set_xlim(0.5, len(labels)+0.5)
         if self.ensemble_metrics[score]["type"] == "election_level":
-            self.draw_arrow(ax, "vertical")
+            self.draw_arrow(ax, score, "vertical")
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
@@ -294,7 +314,7 @@ class PlotFactory:
         ax.set_xticklabels(labels)
         return ax
     
-    def draw_arrow(self, ax, orientation):
+    def draw_arrow(self, ax, score, orientation):
         """
         For some partisan metrics, we want to draw an arrow showing where the POV-party's advantage is.
         Depending on the orientation of the scores (histograms have scores arranged horizontally, violinplots
@@ -311,8 +331,9 @@ class PlotFactory:
             y = sum(ax.get_ylim())/2
             ha = "center"
             rotation = 90
+        term = "seats" if score == "seats" else "advantage"
         ax.text(x, y,
-                f"{self.party[:3]}. advantage",
+                f"{self.party[:3]}. {term}",
                 ha=ha,
                 va="center",
                 color="white",
@@ -400,51 +421,19 @@ class PlotFactory:
         """
         label = self.ensemble_metrics[score]["name"]
         if score == "num_party_districts":
+            label = label.replace("Safe", "Always")
             label = label.format(self.party)
         elif score == "num_op_party_districts":
+            label = label.replace("Safe", "Always")
             label = label.format(self.op_party)
         elif score == "num_competitive_districts":
-            label += f" (out of {len(self.election_names) * self.num_districts})"
+            label = label.replace("Districts", "Contests")
+            label += f" (within 6%, out of {len(self.election_names) * self.num_districts})"
         elif score == "num_swing_districts" or score == "num_party_districts" or score == "num_op_party_districts":
             label += f" (out of {self.num_districts})"
         if election:
             label = f"{election} {label}"
         ax.set_xlabel(label, fontsize=LABEL_SIZE)
-        return ax
-
-    def sea_level_plot(self, labels=True, save=False, figsize=FIG_SIZE):
-        """
-        Make WI-style `sea-level` plot with each proposed plan over each election, compared to the proportional outcome.
-        TODO: this might fail right now — need to test it with new score format.
-        """
-        proportional_share = [self.statewide_share[e] for e in self.election_names]
-        seats_by_plan = [[self.proposed[i]["seats"][e] / self.num_districts for e in self.election_names] for i in range(len(self.proposed))]
-        _, ax = plt.subplots(figsize=figsize)
-        ax.plot(proportional_share,
-                marker='o',
-                markersize=10,
-                lw=5,
-                label="Proportionality",
-                )
-        for i, plan in enumerate(self.proposed_names):
-            ax.plot(seats_by_plan[i],
-                    marker='o',
-                    linestyle='--',
-                    color=self.proposed_colors[i],
-                    label=plan,
-                    )
-        ax.set_xticks(range(len(self.election_names)))
-        ax.set_xticklabels(self.election_names, fontsize=TICK_SIZE)
-        ax.set_ylim(0,1)
-        ax.legend()
-        if labels:
-            ax.set_xlabel("Election", fontsize=LABEL_SIZE)
-            ax.set_ylabel(f"{self.party[:3]}. Share", fontsize=LABEL_SIZE)
-        if save:
-            os.makedirs(self.output_folder, exist_ok=True)
-            filename = f"{self.map_type}_sea_level_{self.chain_type}"
-            plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
-            plt.close()
         return ax
 
     def plot(self, score, election=None, boxplot=False, raw=False, labels=True, save=False, kinds=["ensemble"]):
@@ -474,7 +463,7 @@ class PlotFactory:
         is in `kinds`.
         """
         if self.ensemble_metrics[score]["type"] == "plan_wide":
-            if score == "num_split_counties" or score == "num_county_pieces":
+            if (score == "num_split_counties" or score == "num_county_pieces") and len(self.ensemble_plans) > 1000:
                 scores["ensemble"] = scores["ensemble"][1000:]
             ax = self.plot_histogram(ax,
                                      score,
@@ -530,17 +519,25 @@ class PlotFactory:
                 )
         for i, plan in enumerate(self.proposed_names):
             for j in range(len(seats_by_plan[i])):
-                seats_by_plan[i][j] = seats_by_plan[i][j] + random.uniform(-0.02, 0.02)
+                jitter = random.uniform(-0.02, 0.02) if len(set([seats_by_plan[k][j] for k in range(len(self.proposed_names))])) > 1 else 0
+                seats_by_plan[i][j] = seats_by_plan[i][j] + jitter
             ax.plot(seats_by_plan[i],
                     marker='o',
                     linestyle='--',
                     color=self.proposed_colors[i],
                     label=plan,
                     )
+        if self.num_districts <= 16:
+            yticks = np.arange(0, 1 + 1/self.num_districts, 1/self.num_districts)
+            yticklabels = []
+            for i in range(self.num_districts + 1):
+                yticklabels.append(f"{i}/{self.num_districts}")
+            ax.set_yticks(yticks)
+            ax.set_yticklabels(yticklabels)
         ax.axhline(0.5, color=self.default_color, label="50%")
         ax.set_xticks(range(len(self.election_names)))
         ax.set_xticklabels(self.election_names, fontsize=TICK_SIZE)
-        ax.set_ylim(0,1)
+        ax.set_ylim(-0.02,1)
         ax.legend()
         if labels:
             ax.set_xlabel("Election", fontsize=LABEL_SIZE)
