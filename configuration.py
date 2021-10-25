@@ -12,6 +12,8 @@ SUPPORTED_METRICS = {
     "num_cut_edges": "plan_wide",
     "num_county_pieces": "plan_wide",
     "num_split_counties": "plan_wide",
+    "num_municipal_pieces": "plan_wide",
+    "num_split_municipalities": "plan_wide",
     "seats": "election_level",
     "efficiency_gap": "election_level",
     "mean_median": "election_level",
