@@ -50,7 +50,7 @@ for score in scores.ensemble_metrics.keys():
     if scores.ensemble_metrics[score]["type"] == "plan_wide":
         # continue
         print(f"Plotting {score}")
-        if score == "num_party_wins_by_district":
+        if score == "num_party_wins_by_district" or score == "cut_edges":
             continue
         try:
             scores.plot(score, kinds=all_kinds, save=True)
@@ -72,7 +72,7 @@ for score in scores.ensemble_metrics.keys():
                 continue
     elif scores.ensemble_metrics[score]["type"] == "district_level":
         print(f"Plotting {score}")
-        if not (score == "BVAP20" or score == "WVAP20" or score == "HVAP20"):
+        if not (score == "BVAP" or score == "WVAP" or score == "HVAP"):
             continue
         for boxplot in [True]:
             for raw in [False]:
