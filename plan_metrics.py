@@ -10,20 +10,32 @@ class PlanMetrics:
                  'VAP', 'WVAP', 'BVAP', 'AMINVAP', 'ASIANVAP', 'NHPIVAP', 'OTHERVAP', '2MOREVAP', 'HVAP']
 
     def __init__(self, graph, elections, party, pop_col, state_metrics, county_col="COUNTY", 
-                 demographic_cols=DEMO_COLS, updaters={}) -> None:
+                 demographic_cols=DEMO_COLS, updaters={}, municipality_col=None) -> None:
         self.graph = graph
-        self.county_column = county_col
         self.elections = elections
         self.pop_col = pop_col
         self.party = party
-        self.county_part = Partition(self.graph, self.county_column, 
+        self.county_part = Partition(self.graph, county_col, 
                                      updaters={"population": Tally(self.pop_col, alias="population"), **updaters})
         self.metrics = state_metrics
         self.metric_ids = set([m["id"] for m in state_metrics])
         self.compute_counties_details = "num_county_pieces" in self.metric_ids or "num_split_counties" in self.metric_ids
+        self.compute_municipal_details = "num_municipal_pieces" in self.metric_ids or "num_split_municipalities" in self.metric_ids
         self.demographic_cols = demographic_cols
         self.counties = set(self.county_part.parts.keys())
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
+        if self.compute_municipal_details:
+            self._municipal_precomputation(municipality_col)
+            
+    
+    def _municipal_precomputation(self, municipality_col):
+        municipalities = set()
+        for n in self.graph.nodes():
+            muni = self.graph.nodes()[n][municipality_col]
+            municipalities.update(muni) if type(muni) == list else municipalities.add(muni)
+        self.municipalities = municipalities - set(['99999'])
+        node_in_muni = lambda muni, node_data: node_data == muni or muni in node_data
+        self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if node_in_muni(municipality, self.graph.nodes[n][municipality_col])] for municipality in self.municipalities}
     
     def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
         header = {
@@ -45,12 +57,16 @@ class PlanMetrics:
         
         return header
 
-    def county_split_details(self,part):
+    def county_split_details(self,part, municipalities=False):
         """
         Which districts each county is touched by.
         """
         assignment = dict(part.assignment)
-        return {county: reduce(lambda districts, node: districts | set([assignment[node]]), self.nodes_by_county[county], set()) for county in self.counties}
+        
+        if municipalities:
+            return {municipality: reduce(lambda districts, node: districts | set([assignment[node]]), self.nodes_by_municipality[municipality], set()) for municipality in self.municipalities}
+        else:
+            return {county: reduce(lambda districts, node: districts | set([assignment[node]]), self.nodes_by_county[county], set()) for county in self.counties}
 
     def compactness_metrics(self, part):
         compactness_metrics = {}
@@ -63,7 +79,12 @@ class PlanMetrics:
             compactness_metrics["num_county_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
         if "num_split_counties" in self.metric_ids:
             compactness_metrics["num_split_counties"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
-
+        if self.compute_municipal_details:
+            county_details = self.county_split_details(part, municipalities=True)
+        if "num_municipal_pieces" in self.metric_ids:
+            compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
+        if "num_split_municipalities" in self.metric_ids:
+            compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
         return compactness_metrics
 
     def demographic_metrics(self, part):
@@ -75,7 +96,7 @@ class PlanMetrics:
         county_results = np.array([self.county_part[e].won(self.party, c) for c in counties])
         county_pops = np.array([self.county_part["population"][c] for c in counties])
         ideal = np.dot(county_results, county_pops) / county_pops.sum()
-        return ideal - seat_share
+        return seat_share - ideal
 
     def partisan_metrics(self, part):
         election_metrics = {}

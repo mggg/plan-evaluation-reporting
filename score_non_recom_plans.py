@@ -52,7 +52,7 @@ state_metrics = [{**m, "type": SUPPORTED_METRICS["col_tally"]} if ("type" in m a
                                                                else {**m, "type": SUPPORTED_METRICS[m["id"]]} \
                     for m in filter(lambda m: m["id"] in SUPPORTED_METRIC_IDS or ("type" in m and m["type"] == "col_tally"), 
                                     state_specification["metrics"])]
-
+municipality_col = state_specification["municipal_col"] if "num_municipal_pieces" in state_metric_ids or "num_split_municipalities" in state_metric_ids else None
 
 if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
     warnings.warn("Some state metrics are not supported.  Will continue without tracking them.\n.\
@@ -68,7 +68,7 @@ demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col i
 graph = Graph.from_json(dual_graph_file)
 
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
-                     county_col=county_col, demographic_cols=demographic_cols)
+                     county_col=county_col, demographic_cols=demographic_cols, municipality_col=municipality_col)
 
 if DROPBOX:
     output_path_proposed = f"{HOMEDIR}/Dropbox/PlanAnalysis/proposed_plans/{STATE}/{PLAN_TYPE}/proposed_plans.jsonl"
@@ -98,9 +98,9 @@ if citizen_paths != []:
         
         plans = citizen_ens.to_dict()
         for plan_id, plan in tqdm(plans.items()):
-            try:
-                ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
-                part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
-                print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
-            except:
-                pass
+            # try:
+            ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
+            part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
+            print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
+            # except:
+            #     pass

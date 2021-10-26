@@ -54,7 +54,7 @@ state_metrics = [{**m, "type": SUPPORTED_METRICS["col_tally"]} if ("type" in m a
                                                                else {**m, "type": SUPPORTED_METRICS[m["id"]]} \
                     for m in filter(lambda m: m["id"] in SUPPORTED_METRIC_IDS or ("type" in m and m["type"] == "col_tally"), 
                                     state_specification["metrics"])]
-
+municipality_col = state_specification["municipal_col"] if "num_municipal_pieces" in state_metric_ids or "num_split_municipalities" in state_metric_ids else None
 
 if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
     warnings.warn("Some state metrics are not supported.  Will continue without tracking them.\n.\
@@ -76,7 +76,7 @@ demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col i
 graph = Graph.from_json(dual_graph_file)
 
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
-                     county_col=county_col, demographic_cols=demographic_cols)
+                     county_col=county_col, demographic_cols=demographic_cols, municipality_col=municipality_col)
 
 with gzip.open(output_path, "wt") as fout:
     plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters})
