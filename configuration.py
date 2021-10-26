@@ -23,7 +23,9 @@ SUPPORTED_METRICS = {
     "num_competitive_districts": "plan_wide",
     "num_party_districts": "plan_wide",
     "num_op_party_districts": "plan_wide",
-    "num_party_wins_by_district": "plan_wide"
+    "num_party_wins_by_district": "plan_wide",
+    "num_double_bunked": "plan_wide",
+    "num_zero_bunked": "plan_wide"
 }
 
 SUPPORTED_MAP_TYPES = ["ensemble_plan", "citizen_plan", "proposed_plan"]
