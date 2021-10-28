@@ -20,9 +20,10 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "wi_vtds_0_indexed.json",
+    "dual_graph": "wi_vtds_w_cousub.json",
     "pop_col": "TOTPOP20",
     "county_col": "COUNTY",
+    "municipal_col": "COUSUBFP_v_VTD",
     "elections": [
         {
             "name": "SEN18",
@@ -230,6 +231,8 @@
         {"id": "num_cut_edges", "name": "Cut Edges"},
         {"id": "num_county_pieces", "name": "County Pieces"},
         {"id": "num_split_counties", "name": "Split Counties"},
+        {"id": "num_municipal_pieces", "name": "Municipal Pieces"},
+        {"id": "num_split_municipalities", "name": "Split Municipalities"},
         {"id": "seats", "name": "Seats Won"},
         {"id": "efficiency_gap", "name": "Efficiency Gap"},
         {"id": "mean_median", "name": "Mean Median"},
