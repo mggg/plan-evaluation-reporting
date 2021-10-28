@@ -72,7 +72,7 @@ for score in scores.ensemble_metrics.keys():
                 continue
     elif scores.ensemble_metrics[score]["type"] == "district_level":
         print(f"Plotting {score}")
-        if not (score == "BVAP" or score == "WVAP" or score == "HVAP"):
+        if not ("BVAP" in score or "HVAP" in score or "WVAP" in score):
             continue
         for boxplot in [True]:
             for raw in [False]:
