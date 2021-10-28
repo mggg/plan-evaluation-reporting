@@ -99,8 +99,8 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
-        self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
+        # self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
@@ -132,17 +132,19 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            # new_score = score
+            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-0) if kind == "proposed" or kind == "citizen" else district
+                    plan_district = str(int(district)-1) if kind == "citizen" else district
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
                         # if kind == "proposed":
                         #     print(i, plan[new_score].keys())
                     except:
+                        print(kind)
+                        print(plan_district)
                         print(i, plan[new_score].keys())
                         raise ValueError
         return aggregation
@@ -502,12 +504,14 @@ class PlotFactory:
             # scores = {kind:scores[kind][election] if scores[kind] else [] for kind in scores.keys()}
             sorted_scores, labels = self.resort_populations(score, scores[kinds[0]], raw, kind=kinds[0])
             sorted_proposed_scores, _ = self.resort_populations(score, scores["proposed"], raw, kind="proposed") if scores["proposed"] else [], []
+            if len(sorted_proposed_scores) > 0:
+                sorted_proposed_scores = sorted_proposed_scores[0] # TODO: figure out why we need to index here, seems weird...
             plotting_func = getattr(self, "plot_boxplot" if boxplot else "plot_violin")
             ax = plotting_func(ax,
                                kinds[0], 
                                score,
                                sorted_scores,
-                               sorted_proposed_scores[0], # TODO: figure out why we need to index here, seems weird...
+                               sorted_proposed_scores, 
                                labels,
                               )
             if not raw and max(sorted_scores[-1]) > 0.4:
