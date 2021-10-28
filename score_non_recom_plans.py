@@ -64,7 +64,7 @@ election_names = [e["name"] for e in elections]
 election_updaters = {e["name"]: Election(e["name"], {c["name"]: c["key"] for c in sorted(e["candidates"], 
                                                                                          key=lambda c: c["name"])})
                     for e in elections}
-demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols}
+demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols + [incumbent_col]}
 
 graph = Graph.from_json(dual_graph_file)
 
@@ -100,9 +100,9 @@ if citizen_paths != []:
         
         plans = citizen_ens.to_dict()
         for plan_id, plan in tqdm(plans.items()):
-            # try:
-            ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
-            part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
-            print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
-            # except:
-            #     pass
+            try:
+                ddict = {n: int(plan[graph.nodes()[n]["GEOID20"]]) for n in graph.nodes()}
+                part = Partition(graph, ddict, {**election_updaters, **demographic_updaters})
+                print(json.dumps(scores.plan_summary(part, plan_type="citizen_plan", plan_name=plan_id)), file=fout)
+            except:
+                pass

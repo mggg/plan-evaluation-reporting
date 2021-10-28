@@ -62,9 +62,9 @@ if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
                   Unsupported metrics: {}".format(str(state_metric_ids - set(SUPPORTED_METRIC_IDS))))
 
 # path_long = "mi_chains/mi_cong_0.01_bal_10000_steps_non_county_aware.chain"
-chain_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.chain".format(state, CHAIN_DIR, state.lower(), plan_type,
+chain_path = "/cluster/tufts/mggg/jmatth03/plan-evaluation/{}/{}/{}_{}_{}_bal_{}_steps_{}.chain".format(state, CHAIN_DIR, state.lower(), plan_type,
                                                            eps, steps, method)
-output_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.jsonl.gz".format(state, STATS_DIR, state.lower(), plan_type,
+output_path = "/cluster/tufts/mggg/jmatth03/plan-evaluation/{}/{}/{}_{}_{}_bal_{}_steps_{}.jsonl.gz".format(state, STATS_DIR, state.lower(), plan_type,
                                                            eps, steps, method)
 
 election_names = [e["name"] for e in elections]
@@ -72,7 +72,7 @@ election_names = [e["name"] for e in elections]
 election_updaters = {e["name"]: Election(e["name"], {c["name"]: c["key"] for c in sorted(e["candidates"], 
                                                                                          key=lambda c: c["name"])})
                     for e in elections}
-demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols}
+demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols + [incumbent_col]}
 
 graph = Graph.from_json(dual_graph_file)
 

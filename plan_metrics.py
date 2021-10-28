@@ -86,12 +86,10 @@ class PlanMetrics:
             compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
         if "num_split_municipalities" in self.metric_ids:
             compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
-        if self.incumbent_col is not None:
-            incumbent_details = Tally(self.incumbent_col)(part)
         if "num_double_bunked" in self.metric_ids:
-            compactness_metrics["num_double_bunked"] = reduce(lambda acc, n: acc + 1 if n > 1 else acc, incumbent_details.values(), 0)
+            compactness_metrics["num_double_bunked"] = reduce(lambda acc, n: acc + 1 if n > 1 else acc, part[self.incumbent_col].values(), 0)
         if "num_zero_bunked" in self.metric_ids:
-            compactness_metrics["num_zero_bunked"] = reduce(lambda acc, n: acc + 1 if n == 0 else acc, incumbent_details.values(), 0)
+            compactness_metrics["num_zero_bunked"] = reduce(lambda acc, n: acc + 1 if n == 0 else acc, part[self.incumbent_col].values(), 0)
         
         return compactness_metrics
 
