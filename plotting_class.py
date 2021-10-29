@@ -99,7 +99,8 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
+        # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
+        self.proposed_colors = ["#fc4f65", "#f3c042", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
         # self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
@@ -137,13 +138,13 @@ class PlotFactory:
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-1) if kind == "citizen" else district
+                    plan_district = str(int(district)-1) if kind == "proposed" and i == 0 else district
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
                         # if kind == "proposed":
                         #     print(i, plan[new_score].keys())
                     except:
-                        print(kind)
+                        print(kind, i)
                         print(plan_district)
                         print(i, plan[new_score].keys())
                         raise ValueError
@@ -225,7 +226,7 @@ class PlotFactory:
                     )
         if scores["proposed"]:
             for i, s in enumerate(scores["proposed"]):
-                jitter = random.uniform(-bin_width/5, bin_width/5) if scores["proposed"].count(s) > 1 else 0
+                jitter = 0#random.uniform(-bin_width/5, bin_width/5) if scores["proposed"].count(s) > 1 else 0
                 ax.axvline(s + bin_width / 2 + jitter,
                            color=self.proposed_colors[i],
                            lw=2,
@@ -266,13 +267,13 @@ class PlotFactory:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
                     # horizontally jitter proposed scores regardless of whether there are multiple scores at the same height
-                    jitter = random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
+                    jitter = 0#random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
                                 edgecolor='black',
                                 s=100,
-                                alpha=0.9,
+                                alpha=0.7,
                                 label=self.proposed_names[j] if i == 0 else None,
                                 )
             ax.legend()
@@ -317,13 +318,13 @@ class PlotFactory:
         if proposed_scores:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
-                    jitter = random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
+                    jitter = 0#random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
                                 edgecolor='black',
                                 s=100,
-                                alpha=0.9,
+                                alpha=0.7,
                                 label=self.proposed_names[j] if i == 0 else None,
                                 )
             ax.legend()
@@ -537,7 +538,7 @@ class PlotFactory:
                 )
         for i, plan in enumerate(self.proposed_names):
             for j in range(len(seats_by_plan[i])):
-                jitter = random.uniform(-0.02, 0.02) if len(set([seats_by_plan[k][j] for k in range(len(self.proposed_names))])) > 1 else 0
+                jitter = 0#random.uniform(-0.02, 0.02) if len(set([seats_by_plan[k][j] for k in range(len(self.proposed_names))])) > 1 else 0
                 seats_by_plan[i][j] = seats_by_plan[i][j] + jitter
             ax.plot(seats_by_plan[i],
                     marker='o',
