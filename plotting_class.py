@@ -139,6 +139,7 @@ class PlotFactory:
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
                     plan_district = str(int(district)-1) if kind == "proposed" and i == 0 else district
+                    # print(new_score)
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
                         # if kind == "proposed":
