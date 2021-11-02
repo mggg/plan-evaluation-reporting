@@ -1,0 +1,38 @@
+{
+    "name": "Alabama",
+    "postal": "AL",
+    "plan_types": [
+        "congress",
+        "state_house",
+        "state_senate"
+    ],
+    "districts": {
+        "congress": 7,
+        "state_senate": 34,
+        "state_house": 105
+    },
+    "epsilons": {
+        "congress": 0.01,
+        "state_senate": 0.02,
+        "state_house": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "a_vtds_w_pop.json",
+    "pop_col": "TOTPOP",
+    "county_col": "COUNTY",
+    "elections": [],
+    "pov_party": "Democratic",
+    "metrics": [
+        {"id": "TOTPOP", "name": "TOTPOP", "type": "col_tally"},
+        {"id": "BLACK", "name": "BLACK", "type": "col_tally"},
+        {"id": "VAP", "name": "VAP", "type": "col_tally"},
+        {"id": "BVAP", "name": "BVAP", "type": "col_tally"},
+        {"id": "BVAP_ANY", "name": "BVAP_ANY", "type": "col_tally"},
+        {"id": "num_cut_edges", "name": "Cut Edges"},
+        {"id": "num_county_pieces", "name": "County Pieces"},
+        {"id": "num_split_counties", "name": "Split Counties"}
+    ]
+}
