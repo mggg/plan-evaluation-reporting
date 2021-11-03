@@ -20,8 +20,9 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "a_vtds_w_pop.json",
+    "dual_graph": "al_vtds_w_pop.json",
     "pop_col": "TOTPOP",
+    "vap_col": "VAP",
     "county_col": "COUNTY",
     "elections": [],
     "pov_party": "Democratic",
