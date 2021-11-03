@@ -64,9 +64,15 @@ my_updaters = {"population" : Tally(pop_col, alias="population"),
 total_pop = sum([graph.nodes()[n][pop_col] for n in graph.nodes()])
 ideal_pop = total_pop / k
 
-cddict = recursive_tree_part(graph, range(k), ideal_pop, pop_col, eps)
 
-init_partition = Partition(graph, assignment=cddict, updaters=my_updaters)
+if "seed_plans" in state_specification and plan_type in state_specification["seed_plans"]:
+    seed_plan_path = state_specification["seed_plans"][plan_type] 
+    seed_plan = pd.read_csv(f"seed_plans/{seed_plan_path}", dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
+    ddict = {n: seed_plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
+else:
+    ddict = recursive_tree_part(graph, range(k), ideal_pop, pop_col, eps)
+
+init_partition = Partition(graph, assignment=ddict, updaters=my_updaters)
 
 
 gingles = Gingleator(init_partition, pop_col=pop_col,
