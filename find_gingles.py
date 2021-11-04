@@ -76,8 +76,8 @@ init_partition = Partition(graph, assignment=ddict, updaters=my_updaters)
 
 
 gingles = Gingleator(init_partition, pop_col=pop_col,
-                     threshold=0.5, score_funct=SCORE_FUNC, epsilon=eps,
-                     minority_perc_col="{}_perc".format(min_vap_col))
+                     threshold=0.5, score_funct=SCORE_FUNC, epsilon=eps, county_aware=True,
+                     county_col=county_col, minority_perc_col="{}_perc".format(min_vap_col))
 
 gingles.init_minority_perc_col(min_vap_col, vap_col, 
                                "{}_perc".format(min_vap_col))

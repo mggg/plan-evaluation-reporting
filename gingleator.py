@@ -1,28 +1,29 @@
 from gerrychain import (GeographicPartition, Partition, Graph, MarkovChain,
                         proposals, updaters, constraints, accept, Election)
-from gerrychain.proposals import recom, propose_random_flip
+from gerrychain.proposals import ReCom
 from functools import (partial, reduce)
 import numpy as np
 import random
+from region_aware import *
+import warnings
 
+def config_markov_chain(initial_part, iters, epsilon, pop_col, accept_func=None, county_aware=False,
+                        county_col=None):
+    ideal_pop = sum([initial_part.graph.nodes()[n][pop_col] for n in initial_part.graph.nodes()]) / len(initial_part)
 
-def config_markov_chain(initial_part, iters=1000, epsilon=0.05, 
-                        compactness=True, pop="TOT_POP", accept_func=None):
-    ideal_population = np.nansum(list(initial_part["population"].values())) / len(initial_part)
+    if county_aware and county_col is None:
+        warnings.warn("County column needs to be specified to run county aware chains.  Defaulting\
+                          to running neutral chain with other settings.")
 
-    proposal = partial(recom,
-                       pop_col=pop,
-                       pop_target=ideal_population,
-                       epsilon=epsilon,
-                       node_repeats=1)
-
-    if compactness:
-        compactness_bound = constraints.UpperBound(lambda p: len(p["cut_edges"]),
-                            2*len(initial_part["cut_edges"]))
-        cs = [constraints.within_percent_of_ideal_population(initial_part, epsilon),
-              compactness_bound]
+    if county_aware and county_col is not None:
+        proposal =  ReCom(pop_col, ideal_pop, epsilon,
+                         method=partial(division_bipartition_tree, division_tuples=[(county_col, 1)],
+                                        first_check_division=True))
     else:
-        cs = [constraints.within_percent_of_ideal_population(initial_part, epsilon)]
+        proposal =  ReCom(pop_col, ideal_pop, epsilon)
+
+
+    cs = [constraints.within_percent_of_ideal_population(initial_part, epsilon)]
 
 
     if accept_func == None: accept_func = accept.always_accept
@@ -43,13 +44,20 @@ class Gingleator:
 
     def __init__(self, initial_partition, threshold=0.4, 
                  score_funct=None, minority_perc_col=None,
-                 pop_col="TOTPOP", epsilon=0.05):
+                 pop_col="TOTPOP", epsilon=0.05, county_col=None, county_aware=False):
         self.part = initial_partition
         self.threshold = threshold
         self.score = self.num_opportunity_dists if score_funct == None else score_funct
         self.minority_perc = minority_perc_col
         self.pop_col = pop_col
         self.epsilon = epsilon
+        self.county_aware = county_aware
+        self.county_col = county_col
+        self.markov_chain = partial(config_markov_chain,
+                                    epsilon=self.epsilon,
+                                    pop_col=self.pop_col,
+                                    county_aware=self.county_aware,
+                                    county_col=self.county_col)
 
 
     def init_minority_perc_col(self, minority_pop_col, total_pop_col,
@@ -92,8 +100,7 @@ class Gingleator:
 
         for i in range(num_bursts):
             if verbose: print("*", end="", flush=True)
-            chain = config_markov_chain(max_part[0], iters=num_steps,
-                                        epsilon=self.epsilon, pop=self.pop_col)
+            chain = self.markov_chain(max_part[0], iters=num_steps)
 
             for j, part in enumerate(chain):
                 part_score = self.score(part, self.minority_perc, self.threshold)
@@ -132,8 +139,7 @@ class Gingleator:
 
         while(i < num_iters):
             if verbose: print("*", end="", flush=True)
-            chain = config_markov_chain(max_part[0], iters=burst_len,
-                                        epsilon=self.epsilon, pop=self.pop_col)
+            chain = self.markov_chain(max_part[0], iters=burst_len)
             for j, part in enumerate(chain):
                 part_score = self.score(part, self.minority_perc, self.threshold)
                 observed_num_ops[i] = part_score
@@ -177,9 +183,8 @@ class Gingleator:
             elif not maximize and part_score <= prev_score: return True
             else: return random.random() < p
 
-        chain = config_markov_chain(self.part, iters=num_iters,
-                                    epsilon=self.epsilon, pop=self.pop_col,
-                                    accept_func= biased_acceptance_function)
+        chain = self.markov_chain(self.part, iters=num_iters, accept_func=biased_acceptance_function)
+    
         for i, part in enumerate(chain):
             if verbose and i % 100 == 0: print("*", end="", flush=True)
             part_score = self.score(part, self.minority_perc, self.threshold)
@@ -221,9 +226,7 @@ class Gingleator:
 
         for i in range(num_bursts):
             if verbose: print("Burst:", i)
-            chain = config_markov_chain(max_part[0], iters=num_steps,
-                                        epsilon=self.epsilon, pop=self.pop_col,
-                                        accept_func= biased_acceptance_function)
+            chain = self.markov_chain(max_part[0], iters=num_steps, accept_func=biased_acceptance_function)
 
             for j, part in enumerate(chain):
                 part_score = self.score(part, self.minority_perc, self.threshold)
