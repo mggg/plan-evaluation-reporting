@@ -106,7 +106,7 @@ class PlotFactory:
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
-        self.proposed_colors = ["purple", "green", "orange"]
+        self.proposed_colors = ["purple", "red", "orange"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
