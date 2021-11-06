@@ -100,13 +100,13 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
+        self.proposed_colors = ["#f3c042", "#aa99e4", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#2a4ed8", "#8c644f"]
         # self.proposed_colors = ["#fc4f65", "#f3c042", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
         # self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
-        self.proposed_colors = ["purple", "blue", "green", "orange"]
+        # self.proposed_colors = ["purple", "blue", "green", "orange"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
@@ -134,12 +134,12 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            # new_score = score
+            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-0) if (kind == "proposed" or kind == "citizen") else district
+                    plan_district = str(int(district)-1) if (kind == "citizen") else district
                     # print(new_score)
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
