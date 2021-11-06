@@ -2,6 +2,7 @@ from functools import reduce
 import numpy as np
 import warnings
 from gerrychain import Partition, updaters, metrics
+from gerrychain.updaters import county_splits
 from gerrychain.updaters import Tally
 from configuration import SUPPORTED_MAP_TYPES
 
@@ -34,7 +35,7 @@ class PlanMetrics:
             muni = self.graph.nodes()[n][municipality_col]
             municipalities.update(muni) if type(muni) == list else municipalities.add(muni)
         self.municipalities = municipalities - set(['99999'])
-        node_in_muni = lambda muni, node_data: node_data == muni or muni in node_data
+        node_in_muni = lambda muni, node_data: muni in node_data if type(muni) == list else node_data == muni
         self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if node_in_muni(municipality, self.graph.nodes[n][municipality_col])] for municipality in self.municipalities}
     
     def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
