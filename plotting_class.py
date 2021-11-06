@@ -401,13 +401,16 @@ class PlotFactory:
         """
         if not save:
             return
-        os.makedirs(self.output_folder, exist_ok=True)
+        os.makedirs(f"{self.output_folder}/all_plots/", exist_ok=True)
+        os.makedirs(f"{self.output_folder}/top_plots/", exist_ok=True)
         e = f"_{election}" if election else ""
         b = "_boxplot" if boxplot else ""
         r = "_raw" if raw else ""
         kinds = "_".join(kinds)
         filename = f"{self.map_type}_{score}{e}{b}{r}_{kinds}"
-        plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
+        if "BVAP" in score or "HVAP" in score or "num" in score or (score == "seats" and not election):
+            plt.savefig(f"{self.output_folder}/top_plots/{filename}.png", dpi=300, bbox_inches='tight')
+        plt.savefig(f"{self.output_folder}/all_plots/{filename}.png", dpi=300, bbox_inches='tight')  
         plt.close()
         return
 
