@@ -21,6 +21,7 @@
         "county_aware"
     ],
     "seed_plans": {
+        "congress": "AL_congress.csv",
         "state_house": "AL_vtd20_105_0.05_seed.csv"
     },
     "dual_graph": "al_vtds_w_pop.json",

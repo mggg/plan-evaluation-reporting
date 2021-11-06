@@ -34,10 +34,11 @@ class PlanMetrics:
         for n in self.graph.nodes():
             muni = self.graph.nodes()[n][municipality_col]
             municipalities.update(muni) if type(muni) == list else municipalities.add(muni)
-        self.municipalities = municipalities - set(['99999'])
+        self.municipalities = municipalities# - set(['99999'])
         node_in_muni = lambda muni, node_data: node_data == muni or muni in node_data
         self.nodes_by_municipality = {municipality:[n for n in self.graph.nodes if node_in_muni(municipality, self.graph.nodes[n][municipality_col])] for municipality in self.municipalities}
-    
+        # print(self.nodes_by_municipality)
+
     def summary_data(self, elections, num_districts=0, districts=[], epsilon=None, method=None, ensemble=True):
         header = {
                 "type": "ensemble_summary" if ensemble else "summary",
@@ -63,7 +64,7 @@ class PlanMetrics:
         Which districts each county is touched by.
         """
         assignment = dict(part.assignment)
-        
+        print(set(assignment.values()))
         if municipalities:
             return {municipality: reduce(lambda districts, node: districts | set([assignment[node]]), self.nodes_by_municipality[municipality], set()) for municipality in self.municipalities}
         else:
@@ -81,11 +82,12 @@ class PlanMetrics:
         if "num_split_counties" in self.metric_ids:
             compactness_metrics["num_split_counties"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
         if self.compute_municipal_details:
-            county_details = self.county_split_details(part, municipalities=True)
+            municipal_details = self.county_split_details(part, municipalities=True)
+            print(municipal_details)
         if "num_municipal_pieces" in self.metric_ids:
-            compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
+            compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, municipal_details.values(), 0)
         if "num_split_municipalities" in self.metric_ids:
-            compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
+            compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, municipal_details.values(), 0)
         if "num_double_bunked" in self.metric_ids:
             compactness_metrics["num_double_bunked"] = reduce(lambda acc, n: acc + 1 if n > 1 else acc, part[self.incumbent_col].values(), 0)
         if "num_zero_bunked" in self.metric_ids:
