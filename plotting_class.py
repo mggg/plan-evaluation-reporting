@@ -106,7 +106,7 @@ class PlotFactory:
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
-        # self.proposed_colors = ["purple", "blue", "green", "orange"]
+        # self.proposed_colors = ["purple", "green", "blue", "orange"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
@@ -139,7 +139,7 @@ class PlotFactory:
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-1) if (kind == "citizen") else district
+                    plan_district = str(int(district)-0) if (kind == "proposed" or kind == "citizen") else district
                     # print(new_score)
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
