@@ -84,7 +84,7 @@ class PlotFactory:
             self.proposed_election_names = sort_elections(election["name"] for election in proposed_summary["elections"])
         self.proposed_plans = [json.loads(j) for j in proposed_list if json.loads(j)["type"] == "proposed_plan" and json.loads(j)["name"] not in proposed_winnow]
         self.proposed_names = [proposed_plan["name"] for proposed_plan in self.proposed_plans]
-        print(self.proposed_names)
+        # print(self.proposed_names)
 
         self.party = ensemble_summary["pov_party"]
         self.parties = [candidate["name"] for candidate in ensemble_summary["elections"][0]["candidates"]]
@@ -106,7 +106,7 @@ class PlotFactory:
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
-        self.proposed_colors = ["purple", "red", "orange"]
+        self.proposed_colors = ["purple", "blue", "green", "orange"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
@@ -139,7 +139,7 @@ class PlotFactory:
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
-                    plan_district = str(int(district)-0) if kind == "proposed" else district
+                    plan_district = str(int(district)-0) if (kind == "proposed" or kind == "citizen") else district
                     # print(new_score)
                     try:
                         aggregation[district].append(plan[new_score][plan_district])
@@ -567,8 +567,8 @@ class PlotFactory:
             ax.set_xlabel("Election", fontsize=LABEL_SIZE)
             ax.set_ylabel(f"{self.party[:3]}. Share", fontsize=LABEL_SIZE)
         if save:
-            os.makedirs(self.output_folder, exist_ok=True)
+            os.makedirs(f"{self.output_folder}/top_plots", exist_ok=True)
             filename = f"{self.map_type}_sea_level"
-            plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
+            plt.savefig(f"{self.output_folder}/top_plots/{filename}.png", dpi=300, bbox_inches='tight')  
             plt.close()
         return ax
