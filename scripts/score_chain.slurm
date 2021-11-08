@@ -7,12 +7,12 @@
 #SBATCH --output="/cluster/home/jmatth03/plan-evaluation/%x.%A_%a.txt" # where to save the output file.
 #SBATCH --partition=largemem #largemem #preempt # which queue to use
 
-source ~/.bashrc  # need to set up the normal environment.
+#source ~/.bashrc  # need to set up the normal environment.
 echo running on: `hostname` # print some info about where we are running
 
 # cd into the correct directory
 cd $HOME
-cd plan-evaluation
+cd plan-evaluation-reporting
 
 if [ $4 == 1 ]
 then
