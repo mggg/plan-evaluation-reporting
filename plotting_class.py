@@ -27,7 +27,7 @@ class PlotFactory:
         """
         if plan_type == "congress":
             eps = 0.01
-        elif plan_type == "state_senate":
+        elif plan_type == "state_senate" or plan_type == "school_board":
             eps = 0.02
         elif plan_type == "state_house":
             eps = 0.05
@@ -103,13 +103,13 @@ class PlotFactory:
         self.pop_col = ensemble_summary["pop_col"]
 
         self.default_color = "#5c676f"
-        self.proposed_colors = ["#f3c042", "#aa99e4", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#2a4ed8", "#8c644f"]
+        # self.proposed_colors = ["#f3c042", "#aa99e4", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#2a4ed8", "#8c644f"]
         # self.proposed_colors = ["#fc4f65", "#f3c042", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
         # self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
-        # self.proposed_colors = ["purple", "green", "blue", "orange"]
+        self.proposed_colors = ["purple", "green", "orange", "blue"]
         self.citizen_color = "#4693b3"
         self.output_folder = output_dir
         
@@ -137,8 +137,8 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            new_score = score
+            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            # new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():

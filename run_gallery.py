@@ -33,7 +33,7 @@ print(f"num proposed plans: {len(scores.proposed_plans)}")
 scores.plot_sea_level(save=True)
 
 all_kinds = []
-for kind in ["ensemble"]: # add/remove citizen if we have it/don't have it
+for kind in ["ensemble", "proposed"]: # add/remove citizen if we have it/don't have it
     plans = getattr(scores, f"{kind}_plans")
     if len(plans) > 0:
         all_kinds.append(kind)
