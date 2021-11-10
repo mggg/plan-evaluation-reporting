@@ -8,7 +8,7 @@ from region_aware import *
 import warnings
 
 def config_markov_chain(initial_part, iters, epsilon, pop_col, accept_func=None, county_aware=False,
-                        county_col=None):
+                        county_col=None, add_constraints=[]):
     ideal_pop = sum([initial_part.graph.nodes()[n][pop_col] for n in initial_part.graph.nodes()]) / len(initial_part)
 
     if county_aware and county_col is None:
@@ -23,7 +23,7 @@ def config_markov_chain(initial_part, iters, epsilon, pop_col, accept_func=None,
         proposal =  ReCom(pop_col, ideal_pop, epsilon)
 
 
-    cs = [constraints.within_percent_of_ideal_population(initial_part, epsilon)]
+    cs = [constraints.within_percent_of_ideal_population(initial_part, epsilon)] + add_constraints
 
 
     if accept_func == None: accept_func = accept.always_accept
@@ -43,7 +43,7 @@ class Gingleator:
     """
 
     def __init__(self, initial_partition, threshold=0.4, 
-                 score_funct=None, minority_perc_col=None,
+                 score_funct=None, minority_perc_col=None, add_constraints=[],
                  pop_col="TOTPOP", epsilon=0.05, county_col=None, county_aware=False):
         self.part = initial_partition
         self.threshold = threshold
@@ -53,11 +53,13 @@ class Gingleator:
         self.epsilon = epsilon
         self.county_aware = county_aware
         self.county_col = county_col
+        self.add_constraints = add_constraints
         self.markov_chain = partial(config_markov_chain,
                                     epsilon=self.epsilon,
                                     pop_col=self.pop_col,
                                     county_aware=self.county_aware,
-                                    county_col=self.county_col)
+                                    county_col=self.county_col,
+                                    add_constraints=self.add_constraints )
 
 
     def init_minority_perc_col(self, minority_pop_col, total_pop_col,

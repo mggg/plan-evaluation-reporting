@@ -7,7 +7,7 @@
         "state_senate"
     ],
     "districts": {
-        "congress": 7,
+        "congress": 5,
         "state_senate": 34,
         "state_house": 105
     },
@@ -21,10 +21,9 @@
         "county_aware"
     ],
     "seed_plans": {
-        "congress": "AL_congress.csv",
         "state_house": "AL_vtd20_105_0.05_seed.csv"
     },
-    "dual_graph": "al_vtds_w_pop.json",
+    "dual_graph": "al_vtds_no_dists_4_5.json",
     "pop_col": "TOTPOP",
     "vap_col": "VAP",
     "county_col": "COUNTY",

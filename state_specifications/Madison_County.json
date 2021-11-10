@@ -1,0 +1,36 @@
+{
+    "name": "Alabama",
+    "postal": "AL",
+    "plan_types": [
+        "county_commission_6",
+        "county_commission_7"
+    ],
+    "districts": {
+        "county_commission_6": 6,
+        "county_commission_7": 7
+    },
+    "epsilons": {
+        "county_commission_6": 0.05,
+        "county_commission_7": 0.05
+    },
+    "chain_types": [
+        "neutral",
+        "county_aware"
+    ],
+    "dual_graph": "al_madison_county_blocks20.json",
+    "pop_col": "TOTPOP",
+    "vap_col": "VAP",
+    "county_col": "COUNTY",
+    "elections": [],
+    "pov_party": "Democratic",
+    "metrics": [
+        {"id": "TOTPOP", "name": "TOTPOP", "type": "col_tally"},
+        {"id": "BLACK", "name": "BLACK", "type": "col_tally"},
+        {"id": "VAP", "name": "VAP", "type": "col_tally"},
+        {"id": "BVAP", "name": "BVAP", "type": "col_tally"},
+        {"id": "APBVAP", "name": "APBVAP", "type": "col_tally"},
+        {"id": "num_cut_edges", "name": "Cut Edges"},
+        {"id": "num_county_pieces", "name": "County Pieces"},
+        {"id": "num_split_counties", "name": "Split Counties"}
+    ]
+}

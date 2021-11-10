@@ -29,7 +29,7 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "ut_blocks20.json",
+    "dual_graph": "ut_blocks20_strict.json",
     "pop_col": "TOTPOP20",
     "county_col": "COUNTYFP20",
     "municipal_col": "MuniFIPS",

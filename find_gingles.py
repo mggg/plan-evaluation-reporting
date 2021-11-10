@@ -74,8 +74,14 @@ else:
 
 init_partition = Partition(graph, assignment=ddict, updaters=my_updaters)
 
+cs = []
+def dallas_birmingham_cons(part):
+    return part.assignment[626] == part.assignment[1301]
+# if state == "Alabama" and plan_type == "congress":
+#     cs = [dallas_birmingham_cons]
 
-gingles = Gingleator(init_partition, pop_col=pop_col,
+
+gingles = Gingleator(init_partition, pop_col=pop_col, add_constraints=cs,
                      threshold=0.5, score_funct=SCORE_FUNC, epsilon=eps, county_aware=True,
                      county_col=county_col, minority_perc_col="{}_perc".format(min_vap_col))
 
