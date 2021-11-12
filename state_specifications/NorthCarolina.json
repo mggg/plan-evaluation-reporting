@@ -1,0 +1,86 @@
+{
+      "name": "North Carolina",
+      "postal": "NC",
+      "plan_types": [
+          "congress",
+          "state_house",
+          "state_senate"
+      ],
+      "districts": {
+          "congress": 14,
+          "state_senate": 50,
+          "state_house": 120
+      },
+      "epsilons": {
+          "congress": 0.01,
+          "state_senate": 0.02,
+          "state_house": 0.05
+      },
+      "chain_types": [
+          "neutral",
+          "county_aware"
+      ],
+      "dual_graph": "NC_full_vote_vtd.json",
+      "pop_col": "TOTPOP",
+      "county_col": "COUNTYFP20",
+      "elections": [
+          {
+              "name": "Pres20",
+              "candidates": [
+                  {
+                      "name": "Democratic",
+                      "key": "BidenD_20G_President"
+                  },
+                  {
+                      "name": "Republican",
+                      "key": "TrumpR_20G_President"
+                  }
+              ]
+          },
+          {
+              "name": "EL16G_PR",
+              "candidates": [
+                  {
+                      "name": "Democratic",
+                      "key": "ClintonD_16G_President"
+                  },
+                  {
+                      "name": "Republican",
+                      "key": "TrumpR_16G_President"
+                  }
+              ]
+          }
+      ],
+      "pov_party": "Democratic",
+      "metrics": [
+          {"id": "TOTPOP", "name": "TOTPOP", "type": "col_tally"},
+          {"id": "NH_WHITE", "name": "WPOP", "type": "col_tally"},
+          {"id": "NH_BLACK", "name": "BPOP", "type": "col_tally"},
+          {"id": "NH_AMIN", "name": "AMINPOP", "type": "col_tally"},
+          {"id": "NH_ASIAN", "name": "ASIANPOP", "type": "col_tally"},
+          {"id": "NH_NHPI", "name": "NHPIPOP", "type": "col_tally"},
+          {"id": "NH_OTHER", "name": "OTHERPOP", "type": "col_tally"},
+          {"id": "HISP", "name": "HPOP", "type": "col_tally"},
+          {"id": "VAP", "name": "VAP", "type": "col_tally"},
+          {"id": "WVAP", "name": "WVAP", "type": "col_tally"},
+          {"id": "BVAP", "name": "BVAP", "type": "col_tally"},
+          {"id": "AMINVAP", "name": "AMINVAP", "type": "col_tally"},
+          {"id": "ASIANVAP", "name": "ASIANVAP", "type": "col_tally"},
+          {"id": "NHPIVAP", "name": "NHPIVAP", "type": "col_tally"},
+          {"id": "OTHERVAP", "name": "OTHERVAP", "type": "col_tally"},
+          {"id": "HVAP", "name": "HVAP", "type": "col_tally"},
+          {"id": "num_cut_edges", "name": "Cut Edges"},
+          {"id": "num_county_pieces", "name": "County Pieces"},
+          {"id": "num_split_counties", "name": "Split Counties"},
+          {"id": "seats", "name": "Seats Won"},
+          {"id": "efficiency_gap", "name": "Efficiency Gap"},
+          {"id": "mean_median", "name": "Mean Median"},
+          {"id": "partisan_bias", "name": "Partisan Bias"},
+          {"id": "eguia_county", "name": "Eguia Metric by County"},
+          {"id": "num_swing_districts", "name": "Swing Districts"},
+          {"id": "num_competitive_districts", "name": "Competitive Districts"},
+          {"id": "num_party_districts", "name": "Safe {} Districts"},
+          {"id": "num_op_party_districts", "name": "Safe {} Districts"},
+          {"id": "num_party_wins_by_district", "name": "{} Wins by District"}
+        ]
+}
