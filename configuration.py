@@ -1,5 +1,5 @@
 ## Constants
-SUPPORTED_STATES = ["Michigan", "Virginia", "Wisconsin", "Utah", "Utah_blocks", "Pennsylvania", "Missouri"]
+SUPPORTED_STATES = ["Michigan", "Virginia", "Wisconsin", "Utah", "Utah_blocks", "Pennsylvania", "Missouri", "North_Carolina"]
 SUPPORTED_PLAN_TYPES = ["congress", "state_senate", "state_house", "school_board"]
 
 DUAL_GRAPH_DIR = "dual_graphs"
@@ -14,6 +14,7 @@ SUPPORTED_METRICS = {
     "num_split_counties": "plan_wide",
     "num_municipal_pieces": "plan_wide",
     "num_split_municipalities": "plan_wide",
+    "num_traversals": "plan_wide",
     "seats": "election_level",
     "efficiency_gap": "election_level",
     "mean_median": "election_level",
