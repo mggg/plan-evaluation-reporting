@@ -1,0 +1,739 @@
+{
+      "name": "North Carolina",
+      "postal": "NC",
+      "plan_types": [
+          "congress",
+          "state_house",
+          "state_senate"
+      ],
+      "districts": {
+          "congress": 14,
+          "state_senate": 50,
+          "state_house": 120
+      },
+      "epsilons": {
+          "congress": 0.01,
+          "state_senate": 0.02,
+          "state_house": 0.05
+      },
+      "chain_types": [
+          "neutral",
+          "county_aware"
+      ],
+      "dual_graph": "nc_vtds_0_indexed.json",
+      "pop_col": "TOTPOP",
+      "county_col": "COUNTYFP20",
+      "elections": [
+        {
+              "name": "PRS20",
+              "candidates": [
+                  {
+                      "name": "Democratic",
+                      "key": "BidenD_20G_President"
+                  },
+                  {
+                      "name": "Republican",
+                      "key": "TrumpR_20G_President"
+                  }
+              ]
+        },
+        {
+              "name": "PRS16",
+              "candidates": [
+                  {
+                      "name": "Democratic",
+                      "key": "ClintonD_16G_President"
+                  },
+                  {
+                      "name": "Republican",
+                      "key": "TrumpR_16G_President"
+                  }
+              ]
+        },
+        {
+            "name": "SEN20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CunninghamD_20G_US_Senate"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TillisR_20G_US_Senate"
+                }
+            ]
+        },
+        {
+            "name": "GOV20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CooperD_20G_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "ForestR_20G_Governor"
+                }
+            ]
+        },
+        {
+            "name": "LTG20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "HolleyD_20G_Lt_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "RobinsonR_20G_Lt_Governor"
+                }
+            ]
+        },
+        {
+            "name": "AUD20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "WoodD_20G_Auditor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "StreetR_20G_Auditor"
+                }
+            ]
+        },
+        {
+            "name": "AGC20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "WadsworthD_20G_Ag_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TroxlerR_20G_Ag_Comm"
+                }
+            ]
+        },
+        {
+            "name": "SUP20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "MangrumD_20G_Superintendent"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TruittR_20G_Superintendent"
+                }
+            ]
+        },
+        {
+            "name": "TRS20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ChatterjiD_20G_Treasurer"
+                },
+                {
+                    "name": "Republican",
+                    "key": "FolwellR_20G_Treasurer"
+                }
+            ]
+        },
+        {
+            "name": "SEN16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "RossD_16G_US_Senate"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BurrR_16G_US_Senate"
+                }
+            ]
+        },
+        {
+            "name": "GOV16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CooperD_16G_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "McCroryR_16G_Governor"
+                }
+            ]
+        },
+        {
+            "name": "LTG16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ColemanD_16G_Lt_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "ForestR_16G_Lt_Governor"
+                }
+            ]
+        },
+        {
+            "name": "ATG16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SteinD_16G_AG"
+                },
+                {
+                    "name": "Republican",
+                    "key": "NewtonR_16G_AG"
+                }
+            ]
+        },
+        {
+            "name": "LAC16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "MeekerD_16G_Labor_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BerryR_16G_Labor_Comm"
+                }
+            ]
+        },
+        {
+            "name": "SUP16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AtkinsonD_16G_Superintendent"
+                },
+                {
+                    "name": "Republican",
+                    "key": "JohnsonR_16G_Superintendent"
+                }
+            ]
+        },
+        {
+            "name": "TRS16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "BlueD_16G_Treasurer"
+                },
+                {
+                    "name": "Republican",
+                    "key": "FolwellR_16G_Treasurer"
+                }
+            ]
+        },
+        {
+            "name": "SEN14",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "HaganD_14G_US_Senate"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TillisR_14G_US_Senate"
+                }
+            ]
+        },
+        {
+            "name": "GOV12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "DaltonD_12G_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "McCroryR_12G_Governor"
+                }
+            ]
+        },
+        {
+            "name": "LTG12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ColemanD_12G_Lt_Governor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "ForestR_12G_Lt_Governor"
+                }
+            ]
+        },
+        {
+            "name": "AGC12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SmithD_12G_Ag_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TroxlerR_12G_Ag_Comm"
+                }
+            ]
+        },
+        {
+            "name": "LAC12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "BrooksD_12G_Labor_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BerryR_12G_Labor_Comm"
+                }
+            ]
+        },
+        {
+            "name": "TRS12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CowellD_12G_Treasurer"
+                },
+                {
+                    "name": "Republican",
+                    "key": "RoyalR_12G_Treasurer"
+                }
+            ]
+        },
+        {
+            "name": "PRS12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ObamaD_12G_President"
+                },
+                {
+                    "name": "Republican",
+                    "key": "RomneyR_12G_President"
+                }
+            ]
+        },
+        {
+            "name": "ATG20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SteinD_20G_AG"
+                },
+                {
+                    "name": "Republican",
+                    "key": "ONeillR_20G_AG"
+                }
+            ]
+        },
+        {
+            "name": "SOS12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "MarshallD_12G_SOS"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GoodwinR_12G_SOS"
+                }
+            ]
+        },
+        {
+            "name": "SOS16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "MarshallD_16G_SOS"
+                },
+                {
+                    "name": "Republican",
+                    "key": "LaPagliaR_16G_SOS"
+                }
+            ]
+        },
+        {
+            "name": "SOS20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "MarshallD_20G_SOS"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SykesR_20G_SOS"
+                }
+            ]
+        },
+        {
+            "name": "AUD12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "WoodD_12G_Auditor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GoldmanR_12G_Auditor"
+                }
+            ]
+        },
+        {
+            "name": "INC12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GoodwinD_12G_Ins_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "CauseyR_12G_Ins_Comm"
+                }
+            ]
+        },
+        {
+            "name": "INC16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GoodwinD_16G_Ins_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "CauseyR_16G_Ins_Comm"
+                }
+            ]
+        },
+        {
+            "name": "INC20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "GoodwinD_20G_Ins_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "CauseyR_20G_Ins_Comm"
+                }
+            ]
+        },
+        {
+            "name": "SUP12",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "AtkinsonD_12G_Superintendent"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TedescoR_12G_Superintendent"
+                }
+            ]
+        },
+        {
+            "name": "AUD16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "WoodD_16G_Auditor"
+                },
+                {
+                    "name": "Republican",
+                    "key": "StuberR_16G_Auditor"
+                }
+            ]
+        },
+        {
+            "name": "AGC16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SmithD_16G_Ag_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "TroxlerR_16G_Ag_Comm"
+                }
+            ]
+        },
+        {
+            "name": "LAC20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "HolmesD_20G_Labor_Comm"
+                },
+                {
+                    "name": "Republican",
+                    "key": "DobsonR_20G_Labor_Comm"
+                }
+            ]
+        },
+        {
+            "name": "JST16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "StephensD_16G_Appeals_JudgeStephens"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BergerR_16G_Appeals_JudgeStephens"
+                }
+            ]
+        },
+        {
+            "name": "JHU16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "JonesD_16G_Appeals_JudgeHunter"
+                },
+                {
+                    "name": "Republican",
+                    "key": "HunterR_16G_Appeals_JudgeHunter"
+                }
+            ]
+        },
+        {
+            "name": "JDI16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "RozierD_16G_Appeals_JudgeDietz"
+                },
+                {
+                    "name": "Republican",
+                    "key": "DietzR_16G_Appeals_JudgeDietz"
+                }
+            ]
+        },
+        {
+            "name": "JZA16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "McKoy-MitchellD_16G_Appeals_JudgeZachary"
+                },
+                {
+                    "name": "Republican",
+                    "key": "ZacharyR_16G_Appeals_JudgeZachary"
+                }
+            ]
+        },
+        {
+            "name": "JA118",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ArrowoodD_18G_Appeals_Judge1"
+                },
+                {
+                    "name": "Republican",
+                    "key": "HeathR_18G_Appeals_Judge1"
+                }
+            ]
+        },
+        {
+            "name": "JA318",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CollinsD_18G_Appeals_Judge3"
+                },
+                {
+                    "name": "Republican",
+                    "key": "KitchenR_18G_Appeals_Judge3"
+                }
+            ]
+        },
+        {
+            "name": "JS120",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "BeasleyD_20G_Supreme_Justice1"
+                },
+                {
+                    "name": "Republican",
+                    "key": "NewbyR_20G_Supreme_Justice1"
+                }
+            ]
+        },
+        {
+            "name": "JS220",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "InmanD_20G_Supreme_Justice2"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BergerR_20G_Supreme_Justice2"
+                }
+            ]
+        },
+        {
+            "name": "JS420",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "DavisD_20G_Supreme_Justice4"
+                },
+                {
+                    "name": "Republican",
+                    "key": "BarringerR_20G_Supreme_Justice4"
+                }
+            ]
+        },
+        {
+            "name": "JA420",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "ShieldsD_20G_Appeals_Judge4"
+                },
+                {
+                    "name": "Republican",
+                    "key": "WoodR_20G_Appeals_Judge4"
+                }
+            ]
+        },
+        {
+            "name": "JA520",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "CubbageD_20G_Appeals_Judge5"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GoreR_20G_Appeals_Judge5"
+                }
+            ]
+        },
+        {
+            "name": "JA620",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "StyersD_20G_Appeals_Judge6"
+                },
+                {
+                    "name": "Republican",
+                    "key": "DillonR_20G_Appeals_Judge6"
+                }
+            ]
+        },
+        {
+            "name": "JA720",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "YoungD_20G_Appeals_Judge7"
+                },
+                {
+                    "name": "Republican",
+                    "key": "CarpenterR_20G_Appeals_Judge7"
+                }
+            ]
+        },
+        {
+            "name": "J1320",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "BrookD_20G_Appeals_Judge13"
+                },
+                {
+                    "name": "Republican",
+                    "key": "GriffinR_20G_Appeals_Judge13"
+                }
+            ]
+        },
+        {
+            "name": "JGE16",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "DEM_16G_Appeals_JudgeGeer"
+                },
+                {
+                    "name": "Republican",
+                    "key": "MurphyR_16G_Appeals_JudgeGeer"
+                }
+            ]
+        },
+        {
+            "name": "JS118",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "EarlsD_18G_Supreme_Justice1"
+                },
+                {
+                    "name": "Republican",
+                    "key": "REP_18G_Supreme_Justice1"
+                }
+            ]
+        },
+        {
+            "name": "JA218",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "HampsonD_18G_Appeals_Judge2"
+                },
+                {
+                    "name": "Republican",
+                    "key": "REP_18G_Appeals_Judge2"
+                }
+            ]
+        }
+      ],
+      "pov_party": "Democratic",
+      "metrics": [
+          {"id": "TOTPOP", "name": "TOTPOP", "type": "col_tally"},
+          {"id": "NH_WHITE", "name": "WPOP", "type": "col_tally"},
+          {"id": "NH_BLACK", "name": "BPOP", "type": "col_tally"},
+          {"id": "NH_AMIN", "name": "AMINPOP", "type": "col_tally"},
+          {"id": "NH_ASIAN", "name": "ASIANPOP", "type": "col_tally"},
+          {"id": "NH_NHPI", "name": "NHPIPOP", "type": "col_tally"},
+          {"id": "NH_OTHER", "name": "OTHERPOP", "type": "col_tally"},
+          {"id": "HISP", "name": "HPOP", "type": "col_tally"},
+          {"id": "VAP", "name": "VAP", "type": "col_tally"},
+          {"id": "WVAP", "name": "WVAP", "type": "col_tally"},
+          {"id": "BVAP", "name": "BVAP", "type": "col_tally"},
+          {"id": "BLK_VALONE", "name": "BVAP Alone", "type": "col_tally"},
+          {"id": "BLK_VCOMBO", "name": "BVAP Combo", "type": "col_tally"},
+          {"id": "AMINVAP", "name": "AMINVAP", "type": "col_tally"},
+          {"id": "ASIANVAP", "name": "ASIANVAP", "type": "col_tally"},
+          {"id": "NHPIVAP", "name": "NHPIVAP", "type": "col_tally"},
+          {"id": "OTHERVAP", "name": "OTHERVAP", "type": "col_tally"},
+          {"id": "HVAP", "name": "HVAP", "type": "col_tally"},
+          {"id": "num_cut_edges", "name": "Cut Edges"},
+          {"id": "num_county_pieces", "name": "County Pieces"},
+          {"id": "num_split_counties", "name": "Split Counties"},
+          {"id": "num_traversals", "name": "County Traversals"},
+          {"id": "seats", "name": "Seats Won"},
+          {"id": "efficiency_gap", "name": "Efficiency Gap"},
+          {"id": "mean_median", "name": "Mean Median"},
+          {"id": "partisan_bias", "name": "Partisan Bias"},
+          {"id": "eguia_county", "name": "Eguia Metric by County"},
+          {"id": "num_swing_districts", "name": "Swing Districts"},
+          {"id": "num_competitive_districts", "name": "Competitive Districts"},
+          {"id": "num_party_districts", "name": "Safe {} Districts"},
+          {"id": "num_op_party_districts", "name": "Safe {} Districts"},
+          {"id": "num_party_wins_by_district", "name": "{} Wins by District"}
+        ]
+}

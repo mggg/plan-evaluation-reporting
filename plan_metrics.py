@@ -15,6 +15,7 @@ class PlanMetrics:
         self.graph = graph
         self.elections = elections
         self.pop_col = pop_col
+        self.county_col = county_col
         self.party = party
         self.county_part = Partition(self.graph, county_col, 
                                      updaters={"population": Tally(self.pop_col, alias="population"), **updaters})
@@ -86,6 +87,8 @@ class PlanMetrics:
             compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
         if "num_split_municipalities" in self.metric_ids:
             compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
+        if "num_traversals" in self.metric_ids:
+            compactness_metrics["num_traversals"] = self.num_traversals(part)
         return compactness_metrics
 
     def demographic_metrics(self, part):
@@ -130,6 +133,19 @@ class PlanMetrics:
             election_metrics["eguia_county"] = {part[e].election.name: self.eguia_metric(part, e) for e in self.elections}
 
         return election_metrics
+    
+    def num_traversals(self, part):
+        unique_county_pairs = {district: set() for district in part.assignment.values()}
+        for (n1, n2) in part.graph.edges:
+            if (n1, n2) not in part.cut_edges:
+                district = part.assignment[n1]
+                county1 = part.graph.nodes[n1][self.county_col]
+                county2 = part.graph.nodes[n2][self.county_col]
+                if county1 != county2: 
+                    county_pair = tuple(sorted([county1, county2]))
+                    unique_county_pairs[district].add(county_pair)
+        num_traversals = sum([len(pair_set) for district, pair_set in unique_county_pairs.items()])
+        return num_traversals
 
     def plan_summary(self, plan, plan_type="ensemble_plan", plan_name=""):
         """
@@ -151,3 +167,4 @@ class PlanMetrics:
         if plan_type == "citizen_plan":
             plan_metrics["plan_id"] = plan_name
         return plan_metrics
+
