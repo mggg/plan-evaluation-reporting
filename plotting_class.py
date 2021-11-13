@@ -12,7 +12,7 @@ def sort_elections(elec_list):
     Helper function to sort elections chronologically for plotting. Assumes the last two characters
     in the election name are the year, e.g. "SEN18"
     """
-    tuplified_elecs = list(map(lambda x: re.findall(r"[^\W\d_]+|\d+",x), elec_list))
+    tuplified_elecs = list(map(lambda x: (x[:-2], x[-2:]), sorted(elec_list)))
     sorted_tuples = sorted(tuplified_elecs, key=lambda x: x[1])
     return [tup[0] + tup[1] for tup in sorted_tuples]
 
@@ -89,8 +89,10 @@ class PlotFactory:
         self.parties = [candidate["name"] for candidate in ensemble_summary["elections"][0]["candidates"]]
         self.op_party = [party for party in self.parties if party != self.party][0]
         self.elections = ensemble_summary["elections"]
-        self.election_names = sort_elections([election["name"] for election in ensemble_summary["elections"]])
-        self.statewide_share = ensemble_summary["party_statewide_share"]
+        # self.election_names = sort_elections([election["name"] for election in ensemble_summary["elections"]])
+        self.election_names = [elec for elec in sort_elections([election["name"] for election in proposed_summary["elections"]]) if "PRS" in elec or "GOV" in elec or "SOS" in elec or "LTG" in elec or "ATG" in elec or "SEN" in elec]
+        # self.statewide_share = ensemble_summary["party_statewide_share"]
+        self.statewide_share = proposed_summary["party_statewide_share"]
 
         self.num_districts = ensemble_summary["num_districts"]
         self.epsilon = ensemble_summary["epsilon"]
@@ -132,8 +134,8 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            # new_score = score
+            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
@@ -244,17 +246,18 @@ class PlotFactory:
         Color the violins conditioned on the kind of the scores (ensemble or citizen), and if plotting ensemble, then
         trim each sublist to only the values between the 1-99th percentile, to match our boxplits (otherwise don't trim).
         """
-        trimmed_scores = []
-        for score_list in scores:
-            low = np.percentile(score_list, 1 if kind=="ensemble" else 0)
-            high = np.percentile(score_list, 99 if kind=="ensemble" else 100)
-            # print(f"Only including scores between [{low}, {high}]")
-            trimmed_scores.append([s for s in score_list if s >= low and s <= high])
-        parts = ax.violinplot(trimmed_scores, showextrema=False)
-        for pc in parts['bodies']:
-            pc.set_facecolor(self.default_color if kind == "ensemble" else self.citizen_color)
-            pc.set_edgecolor("black")
-            pc.set_alpha(1)
+        if kind != "proposed":
+            trimmed_scores = []
+            for score_list in scores:
+                low = np.percentile(score_list, 1 if kind=="ensemble" else 0)
+                high = np.percentile(score_list, 99 if kind=="ensemble" else 100)
+                # print(f"Only including scores between [{low}, {high}]")
+                trimmed_scores.append([s for s in score_list if s >= low and s <= high])
+            parts = ax.violinplot(trimmed_scores, showextrema=False)
+            for pc in parts['bodies']:
+                pc.set_facecolor(self.default_color if kind == "ensemble" else self.citizen_color)
+                pc.set_edgecolor("black")
+                pc.set_alpha(1)
         ax.set_xticks(range(1, len(labels)+1))
         ax.set_xticklabels(list(labels), fontsize=TICK_SIZE)
         ax.set_xlim(0.5, len(labels)+0.5)
@@ -264,7 +267,7 @@ class PlotFactory:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
                     # horizontally jitter proposed scores regardless of whether there are multiple scores at the same height
-                    jitter = random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
+                    jitter = 0#random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
@@ -274,6 +277,7 @@ class PlotFactory:
                                 label=self.proposed_names[j] if i == 0 else None,
                                 )
             ax.legend()
+            ax.grid(axis='x')
         if score == "efficiency_gap":
             self.add_ideal_band(ax, "vertical")
         # for the seats plot, add a 50% marker and proportionality bands on each election
