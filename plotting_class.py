@@ -103,7 +103,8 @@ class PlotFactory:
 
         self.default_color = "#5c676f"
         # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
-        self.proposed_colors = ["#68aa29", "#d63055", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        # self.proposed_colors = ["#68aa29", "#d63055", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        self.proposed_colors = ["#F3C042", "#96B237", "#BC2F45", "#8CD1C5", "#C26D2B", "#F2BBC4", "#00926A", "#AA99E4", "#2A4ED8", "#8C644F", "red", "purple", "violet", "green", "orange"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
@@ -575,7 +576,29 @@ class PlotFactory:
             plt.close()
         return ax
 
-    # def plot_new(self, labels=True, save=False):
+    def plot_aggProp(self, kinds=["ensemble"], labels=True, save=False):
+        scores = {kind:self.aggregate_score("seats", kind=kind) if kind in kinds else [] for kind in ["ensemble", "citizen", "proposed"]}
+        agg_seats = {kind: [] for kind in scores}
+        for kind in scores:
+            if type(scores[kind]) == dict:
+                for i in range(len(scores[kind][self.election_names[0]])):
+                    seats = 0
+                    for election in self.election_names:
+                        seats += scores[kind][election][i]
+                    agg_seats[kind].append(seats)
 
-    #     return ax
+        _, ax = plt.subplots(figsize=FIG_SIZE)
+        ax = self.plot_histogram(ax, "seats", agg_seats)
+
+        proportional = round(sum([self.statewide_share[e]*self.num_districts for e in self.election_names]))
+        ax.axvline(proportional, color='lightblue', lw=4, label=f"proportional: {proportional}")
+        plt.legend()
+        if labels:
+            ax.set_xlabel(f"Aggregate {self.party} seats", fontsize=LABEL_SIZE)
+        if save:
+            os.makedirs(self.output_folder, exist_ok=True)
+            filename = f"{self.map_type}_aggProp"
+            plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
+            plt.close()
+        return ax
     

@@ -46,9 +46,9 @@ def initialize_df(proposed_list):
                     plan_scores.add(f"prop-{election}")
         elif metric_type == "district_level" and "BVAP" in metric:
             for district in range(1, proposed_summary["num_districts"] + 1):
-                district_scores.append(f"APBVAP-{district}")
+                district_scores.append(f"APBVAP20-{district}")
             for district in range(1, proposed_summary["num_districts"] + 1):
-                district_scores.append(f"BVAP-{district}")
+                district_scores.append(f"BVAP20-{district}")
     df = pd.DataFrame(index=["aggProp"] + sorted(plan_scores) + sorted(election_scores) + district_scores, columns=proposed_names + ["Ensemble-Mean", "Ensemble-Median"])
     return df
 
@@ -57,8 +57,8 @@ def fill_df(proposed_list, df):
     proposed_plans = [json.loads(j) for j in proposed_list if json.loads(j)["type"] == "proposed_plan"]
     elections = sort_elections([election["name"] for election in proposed_summary["elections"]])
 
-    print(np.mean([proposed_summary["num_districts"] * proposed_summary["party_statewide_share"][elec] for elec in elections]))
-    print(np.mean([proposed_summary["party_statewide_share"][elec] for elec in elections]))
+    # print(np.mean([proposed_summary["num_districts"] * proposed_summary["party_statewide_share"][elec] for elec in elections]))
+    # print(np.mean([proposed_summary["party_statewide_share"][elec] for elec in elections]))
 
     # try:
     #     factory = PlotFactory(state, map)
@@ -79,12 +79,12 @@ def fill_df(proposed_list, df):
             else:
                 first = metric.split("-")[0]
                 second = metric.split("-")[1]
-                if "APBVAP" in metric:
-                    sorted_group = sorted([(plan["BLK_VALONE"][str(d)] + plan["BLK_VCOMBO"][str(d)]) / plan["VAP"][str(d)] for d in range(1, proposed_summary["num_districts"] + 1)])
-                    for d in range(1, proposed_summary["num_districts"] + 1):
-                        df[plan["name"]].loc[f"APBVAP-{str(d)}"] = sorted_group[d-1]
-                elif "BVAP" in metric:
-                    sorted_group = sorted([plan[first][str(d)] / plan["VAP"][str(d)] for d in range(1, proposed_summary["num_districts"] + 1)])
+                # if "APBVAP" in metric:
+                #     sorted_group = sorted([(plan["BLK_VALONE"][str(d)] + plan["BLK_VCOMBO"][str(d)]) / plan["VAP"][str(d)] for d in range(1, proposed_summary["num_districts"] + 1)])
+                #     for d in range(1, proposed_summary["num_districts"] + 1):
+                #         df[plan["name"]].loc[f"APBVAP-{str(d)}"] = sorted_group[d-1]
+                if "BVAP" in metric or "APBVAP" in metric:
+                    sorted_group = sorted([plan[first][str(d)] / plan["VAP20"][str(d)] for d in range(1, proposed_summary["num_districts"] + 1)])
                     for d in range(1, proposed_summary["num_districts"] + 1):
                         df[plan["name"]].loc[f"{first}-{str(d)}"] = sorted_group[d-1]
                 else:
