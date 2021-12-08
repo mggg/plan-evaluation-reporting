@@ -89,10 +89,11 @@ class PlotFactory:
         self.parties = [candidate["name"] for candidate in ensemble_summary["elections"][0]["candidates"]]
         self.op_party = [party for party in self.parties if party != self.party][0]
         self.elections = ensemble_summary["elections"]
-        # self.election_names = sort_elections([election["name"] for election in ensemble_summary["elections"]])
-        self.election_names = [elec for elec in sort_elections([election["name"] for election in proposed_summary["elections"]]) if "PRS" in elec or "GOV" in elec or "SOS" in elec or "LTG" in elec or "ATG" in elec or "SEN" in elec]
-        # self.statewide_share = ensemble_summary["party_statewide_share"]
-        self.statewide_share = proposed_summary["party_statewide_share"]
+        self.election_names = sort_elections([election["name"] for election in ensemble_summary["elections"]])
+        # self.election_names = [elec for elec in sort_elections([election["name"] for election in proposed_summary["elections"]]) if "PRS" in elec or "GOV" in elec or "SOS" in elec or "LTG" in elec or "ATG" in elec or "SEN" in elec]
+        # self.election_names = sort_elections([election["name"] for election in proposed_summary["elections"]])
+        self.statewide_share = ensemble_summary["party_statewide_share"]
+        # self.statewide_share = proposed_summary["party_statewide_share"]
 
         self.num_districts = ensemble_summary["num_districts"]
         self.epsilon = ensemble_summary["epsilon"]
@@ -102,7 +103,7 @@ class PlotFactory:
 
         self.default_color = "#5c676f"
         # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
-        self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        self.proposed_colors = ["#68aa29", "#d63055", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
@@ -259,7 +260,7 @@ class PlotFactory:
                 pc.set_edgecolor("black")
                 pc.set_alpha(1)
         ax.set_xticks(range(1, len(labels)+1))
-        ax.set_xticklabels(list(labels), fontsize=TICK_SIZE)
+        ax.set_xticklabels(list(labels), fontsize=TICK_SIZE, rotation=90)
         ax.set_xlim(0.5, len(labels)+0.5)
         if self.ensemble_metrics[score]["type"] == "election_level":
             self.draw_arrow(ax, score, "vertical")
@@ -295,6 +296,13 @@ class PlotFactory:
                        alpha=0.5, 
                        label="50%",
                       )
+            ax.legend()
+        if score == "eguia_county":
+            ax.axhline(0,
+                       color=self.default_color,
+                       alpha=0.5,
+                       label="ideal",
+                       )
             ax.legend()
         return ax
     
@@ -345,7 +353,7 @@ class PlotFactory:
             ha = "left"
             rotation = 0
         elif orientation == "vertical":
-            x = ax.get_xlim()[0] - 0.06*(sum(map(lambda x: abs(x), ax.get_xlim())))
+            x = ax.get_xlim()[0] - 0.07*(sum(map(lambda x: abs(x), ax.get_xlim())))
             y = sum(ax.get_ylim())/2
             ha = "center"
             rotation = 90
@@ -566,3 +574,8 @@ class PlotFactory:
             plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
             plt.close()
         return ax
+
+    # def plot_new(self, labels=True, save=False):
+
+    #     return ax
+    
