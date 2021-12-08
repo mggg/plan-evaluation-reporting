@@ -20,7 +20,7 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "wi_block_no_water_elecs_lostvotes.json",
+    "dual_graph": "wi_block_no_water_elecs.json",
     "pop_col": "TOTPOP20",
     "county_col": "COUNTYFP20",
     "elections": [
