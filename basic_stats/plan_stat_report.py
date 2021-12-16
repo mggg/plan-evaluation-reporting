@@ -22,7 +22,7 @@ def plan_stat_report(assignment_csv, graph, pop_key):
   assignment["GEOID20"] = "0" + assignment["GEOID20"]
   assignment = assignment.set_index("GEOID20").to_dict()['assignment']
   
-  #print(assignment)
+  
   ddict = {n: assignment[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
   total_population = sum([graph.nodes()[n][pop_key] for n in graph.nodes()])
   ideal_population = round(total_population/len(set(assignment.values())))
@@ -54,4 +54,8 @@ def plan_stat_report(assignment_csv, graph, pop_key):
   
   polsby = sum(gerrychain.metrics.polsby_popper(state_geo_partition).values()) / len(state_geo_partition.parts)
   return {"Contiguous": gerrychain.constraints.contiguous(state_partition), "Cut Edges": len(state_partition.cut_edges), "Total Edges": len(state_partition.graph.edges), "Polsby popper": polsby, "Max/Min Density": (max_density/min_density), "Average Density": avg_density, "Min Pop Deviation": round(min_pop_deviation), "Min District": min_district, "Max Pop Deviation": round(max_pop_deviation), "Max District": max_district}
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
 
