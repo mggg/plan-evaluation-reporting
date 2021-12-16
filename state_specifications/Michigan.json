@@ -20,9 +20,15 @@
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "mi_vtds_0_indexed.json",
+    "dual_graph": "mi_vtds_0_indexed_w_cousub.json",
     "pop_col": "TOTPOP",
     "county_col": "COUNTY",
+    "municipal_col": "COUSUBFP",
+    "incumbent_cols": {
+        "congress": "Incumbent_CD",
+        "state_senate": "Incumbent_SD",
+        "state_house": "Incumbent_HD"
+    },
     "elections": [
         {
             "name": "GOV18",
@@ -113,6 +119,8 @@
         {"id": "num_cut_edges", "name": "Cut Edges"},
         {"id": "num_county_pieces", "name": "County Pieces"},
         {"id": "num_split_counties", "name": "Split Counties"},
+        {"id": "num_municipal_pieces", "name": "Municipal Pieces"},
+        {"id": "num_split_municipalities", "name": "Split Municipalities"},
         {"id": "seats", "name": "Seats Won"},
         {"id": "efficiency_gap", "name": "Efficiency Gap"},
         {"id": "mean_median", "name": "Mean Median"},
@@ -122,6 +130,8 @@
         {"id": "num_competitive_districts", "name": "Competitive Districts"},
         {"id": "num_party_districts", "name": "Safe {} Districts"},
         {"id": "num_op_party_districts", "name": "Safe {} Districts"},
-        {"id": "num_party_wins_by_district", "name": "{} Wins by District"}
+        {"id": "num_party_wins_by_district", "name": "{} Wins by District"},
+        {"id": "num_double_bunked", "name": "Double Bunked Incumbents"},
+        {"id": "num_zero_bunked", "name": "None Bunked Incumbents "}
     ]
 }

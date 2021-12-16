@@ -11,7 +11,7 @@ class PlanMetrics:
                  'VAP', 'WVAP', 'BVAP', 'AMINVAP', 'ASIANVAP', 'NHPIVAP', 'OTHERVAP', '2MOREVAP', 'HVAP']
 
     def __init__(self, graph, elections, party, pop_col, state_metrics, county_col="COUNTY", 
-                 demographic_cols=DEMO_COLS, updaters={}, municipality_col=None) -> None:
+                 demographic_cols=DEMO_COLS, updaters={}, municipality_col=None, incumbent_col=None) -> None:
         self.graph = graph
         self.elections = elections
         self.pop_col = pop_col
@@ -28,6 +28,7 @@ class PlanMetrics:
         self.nodes_by_county = {county:[n for n in self.graph.nodes if self.graph.nodes[n][county_col] == county] for county in self.counties}
         if self.compute_municipal_details:
             self._municipal_precomputation(municipality_col)
+        self.incumbent_col = incumbent_col
             
     
     def _municipal_precomputation(self, municipality_col):
@@ -87,6 +88,10 @@ class PlanMetrics:
             compactness_metrics["num_municipal_pieces"] = reduce(lambda acc, ds: acc + len(ds) if len(ds) > 1 else acc, county_details.values(), 0)
         if "num_split_municipalities" in self.metric_ids:
             compactness_metrics["num_split_municipalities"] = reduce(lambda acc, ds: acc + 1 if len(ds) > 1 else acc, county_details.values(), 0)
+        if "num_double_bunked" in self.metric_ids:
+            compactness_metrics["num_double_bunked"] = reduce(lambda acc, n: acc + 1 if n > 1 else acc, part[self.incumbent_col].values(), 0)
+        if "num_zero_bunked" in self.metric_ids:
+            compactness_metrics["num_zero_bunked"] = reduce(lambda acc, n: acc + 1 if n == 0 else acc, part[self.incumbent_col].values(), 0)
         if "num_traversals" in self.metric_ids:
             compactness_metrics["num_traversals"] = self.num_traversals(part)
         return compactness_metrics

@@ -55,6 +55,7 @@ state_metrics = [{**m, "type": SUPPORTED_METRICS["col_tally"]} if ("type" in m a
                     for m in filter(lambda m: m["id"] in SUPPORTED_METRIC_IDS or ("type" in m and m["type"] == "col_tally"), 
                                     state_specification["metrics"])]
 municipality_col = state_specification["municipal_col"] if "num_municipal_pieces" in state_metric_ids or "num_split_municipalities" in state_metric_ids else None
+incumbent_col = state_specification["incumbent_cols"][plan_type] if "num_double_bunked" in state_metric_ids or "num_zero_bunked" in state_metric_ids else None
 
 if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
     warnings.warn("Some state metrics are not supported.  Will continue without tracking them.\n.\
@@ -71,12 +72,13 @@ election_names = [e["name"] for e in elections]
 election_updaters = {e["name"]: Election(e["name"], {c["name"]: c["key"] for c in sorted(e["candidates"], 
                                                                                          key=lambda c: c["name"])})
                     for e in elections}
-demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols}
+demographic_updaters = {demo_col: Tally(demo_col, alias=demo_col) for demo_col in demographic_cols + [incumbent_col]}
 
 graph = Graph.from_json(dual_graph_file)
 
 scores = PlanMetrics(graph, election_names, party, pop_col, state_metrics, updaters=election_updaters, 
-                     county_col=county_col, demographic_cols=demographic_cols, municipality_col=municipality_col)
+                     county_col=county_col, demographic_cols=demographic_cols,
+                     municipality_col=municipality_col, incumbent_col=incumbent_col)
 
 with gzip.open(output_path, "wt") as fout:
     plan_generator = Replay(graph, chain_path, {**demographic_updaters, **election_updaters})
