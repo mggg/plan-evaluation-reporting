@@ -6,6 +6,7 @@ from pcompress import Record
 from functools import partial
 import warnings
 from region_aware import *
+import tqdm
 
 class ChainRecorder:
     def __init__(self, graph, output_dir, pop_col, county_col=None, verbose_freq=None) -> None:
@@ -57,6 +58,6 @@ class ChainRecorder:
                             accept=accept_func, initial_state=initial_partition,
                             total_steps=steps)
 
-        for i, part in  enumerate(Record(chain, "{}/{}".format(self.output_dir, file_name))):
+        for i, part in  enumerate(Record(tqdm.tqdm(chain), "{}/{}".format(self.output_dir, file_name))):
             if self.verbose_freq is not None and i % self.verbose_freq == self.verbose_freq - 1:
                 print("*", end="", flush=True)

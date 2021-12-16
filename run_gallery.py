@@ -38,6 +38,8 @@ for kind in ["ensemble", "proposed"]: # add/remove citizen if we have it/don't h
     if len(plans) > 0:
         all_kinds.append(kind)
 
+scores.plot_aggProp(kinds=all_kinds, save=True)
+
 kind_types = []
 for kind in ["ensemble"]: # add/remove citizen if we have it/don't have it
     if kind in all_kinds:

@@ -12,7 +12,7 @@ def sort_elections(elec_list):
     Helper function to sort elections chronologically for plotting. Assumes the last two characters
     in the election name are the year, e.g. "SEN18"
     """
-    tuplified_elecs = list(map(lambda x: re.findall(r"[^\W\d_]+|\d+",x), elec_list))
+    tuplified_elecs = list(map(lambda x: (x[:-2], x[-2:]), sorted(elec_list)))
     sorted_tuples = sorted(tuplified_elecs, key=lambda x: x[1])
     return [tup[0] + tup[1] for tup in sorted_tuples]
 
@@ -90,7 +90,10 @@ class PlotFactory:
         self.op_party = [party for party in self.parties if party != self.party][0]
         self.elections = ensemble_summary["elections"]
         self.election_names = sort_elections([election["name"] for election in ensemble_summary["elections"]])
+        # self.election_names = [elec for elec in sort_elections([election["name"] for election in proposed_summary["elections"]]) if "PRS" in elec or "GOV" in elec or "SOS" in elec or "LTG" in elec or "ATG" in elec or "SEN" in elec]
+        # self.election_names = sort_elections([election["name"] for election in proposed_summary["elections"]])
         self.statewide_share = ensemble_summary["party_statewide_share"]
+        # self.statewide_share = proposed_summary["party_statewide_share"]
 
         self.num_districts = ensemble_summary["num_districts"]
         self.epsilon = ensemble_summary["epsilon"]
@@ -100,7 +103,8 @@ class PlotFactory:
 
         self.default_color = "#5c676f"
         # self.proposed_colors = ["#f3c042", "#96b237", "#bc2f45", "#8cd1c5", "#c26d2b", "#f2bbc4", "#00926a", "#aa99e4", "#2a4ed8", "#8c644f"]
-        self.proposed_colors = ["#f3c042", "#c26d2b", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        # self.proposed_colors = ["#68aa29", "#d63055", "purple", "#aa99e4", "#2a4ed8", "#00926a"]
+        self.proposed_colors = ["#F3C042", "#96B237", "#BC2F45", "#8CD1C5", "#C26D2B", "#F2BBC4", "#00926A", "#AA99E4", "#2A4ED8", "#8C644F", "red", "purple", "violet", "green", "orange"]
         # self.proposed_colors = ["orange", "red", "purple", "violet", "green"]
         # self.proposed_colors = ["orange", "purple", "violet", "red", "green"]
         # self.proposed_colors = ["orange", "#f2bbc4", "#bc2f45", "#c26d2b", "#8cd1c5", "green"]
@@ -132,8 +136,8 @@ class PlotFactory:
                     aggregation[e].append(plan[score][e])
         elif self.ensemble_metrics[score]["type"] == "district_level":
             # replace UT metric since it doesn't line up with ensemble
-            new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
-            # new_score = score
+            # new_score = score + "20" if kind == "proposed" or kind == "citizen" else score
+            new_score = score
             aggregation = {district: [] for district in self.ensemble_plans[0][score].keys()}
             for i, plan in enumerate(plans):
                 for district in aggregation.keys():
@@ -244,19 +248,20 @@ class PlotFactory:
         Color the violins conditioned on the kind of the scores (ensemble or citizen), and if plotting ensemble, then
         trim each sublist to only the values between the 1-99th percentile, to match our boxplits (otherwise don't trim).
         """
-        trimmed_scores = []
-        for score_list in scores:
-            low = np.percentile(score_list, 1 if kind=="ensemble" else 0)
-            high = np.percentile(score_list, 99 if kind=="ensemble" else 100)
-            # print(f"Only including scores between [{low}, {high}]")
-            trimmed_scores.append([s for s in score_list if s >= low and s <= high])
-        parts = ax.violinplot(trimmed_scores, showextrema=False)
-        for pc in parts['bodies']:
-            pc.set_facecolor(self.default_color if kind == "ensemble" else self.citizen_color)
-            pc.set_edgecolor("black")
-            pc.set_alpha(1)
+        if kind != "proposed":
+            trimmed_scores = []
+            for score_list in scores:
+                low = np.percentile(score_list, 1 if kind=="ensemble" else 0)
+                high = np.percentile(score_list, 99 if kind=="ensemble" else 100)
+                # print(f"Only including scores between [{low}, {high}]")
+                trimmed_scores.append([s for s in score_list if s >= low and s <= high])
+            parts = ax.violinplot(trimmed_scores, showextrema=False)
+            for pc in parts['bodies']:
+                pc.set_facecolor(self.default_color if kind == "ensemble" else self.citizen_color)
+                pc.set_edgecolor("black")
+                pc.set_alpha(1)
         ax.set_xticks(range(1, len(labels)+1))
-        ax.set_xticklabels(list(labels), fontsize=TICK_SIZE)
+        ax.set_xticklabels(list(labels), fontsize=TICK_SIZE, rotation=90)
         ax.set_xlim(0.5, len(labels)+0.5)
         if self.ensemble_metrics[score]["type"] == "election_level":
             self.draw_arrow(ax, score, "vertical")
@@ -264,7 +269,7 @@ class PlotFactory:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
                     # horizontally jitter proposed scores regardless of whether there are multiple scores at the same height
-                    jitter = random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
+                    jitter = 0#random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
@@ -274,6 +279,7 @@ class PlotFactory:
                                 label=self.proposed_names[j] if i == 0 else None,
                                 )
             ax.legend()
+            ax.grid(axis='x')
         if score == "efficiency_gap":
             self.add_ideal_band(ax, "vertical")
         # for the seats plot, add a 50% marker and proportionality bands on each election
@@ -291,6 +297,13 @@ class PlotFactory:
                        alpha=0.5, 
                        label="50%",
                       )
+            ax.legend()
+        if score == "eguia_county":
+            ax.axhline(0,
+                       color=self.default_color,
+                       alpha=0.5,
+                       label="ideal",
+                       )
             ax.legend()
         return ax
     
@@ -341,7 +354,7 @@ class PlotFactory:
             ha = "left"
             rotation = 0
         elif orientation == "vertical":
-            x = ax.get_xlim()[0] - 0.06*(sum(map(lambda x: abs(x), ax.get_xlim())))
+            x = ax.get_xlim()[0] - 0.07*(sum(map(lambda x: abs(x), ax.get_xlim())))
             y = sum(ax.get_ylim())/2
             ha = "center"
             rotation = 90
@@ -562,3 +575,30 @@ class PlotFactory:
             plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
             plt.close()
         return ax
+
+    def plot_aggProp(self, kinds=["ensemble"], labels=True, save=False):
+        scores = {kind:self.aggregate_score("seats", kind=kind) if kind in kinds else [] for kind in ["ensemble", "citizen", "proposed"]}
+        agg_seats = {kind: [] for kind in scores}
+        for kind in scores:
+            if type(scores[kind]) == dict:
+                for i in range(len(scores[kind][self.election_names[0]])):
+                    seats = 0
+                    for election in self.election_names:
+                        seats += scores[kind][election][i]
+                    agg_seats[kind].append(seats)
+
+        _, ax = plt.subplots(figsize=FIG_SIZE)
+        ax = self.plot_histogram(ax, "seats", agg_seats)
+
+        proportional = round(sum([self.statewide_share[e]*self.num_districts for e in self.election_names]))
+        ax.axvline(proportional, color='lightblue', lw=4, label=f"proportional: {proportional}")
+        plt.legend()
+        if labels:
+            ax.set_xlabel(f"Aggregate {self.party} seats", fontsize=LABEL_SIZE)
+        if save:
+            os.makedirs(self.output_folder, exist_ok=True)
+            filename = f"{self.map_type}_aggProp"
+            plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
+            plt.close()
+        return ax
+    
