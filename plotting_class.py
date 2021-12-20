@@ -587,14 +587,16 @@ class PlotFactory:
                         seats += scores[kind][election][i]
                     agg_seats[kind].append(seats)
 
-        _, ax = plt.subplots(figsize=FIG_SIZE)
+        _, ax = plt.subplots(figsize=(16,6))
         ax = self.plot_histogram(ax, "seats", agg_seats)
 
-        proportional = round(sum([self.statewide_share[e]*self.num_districts for e in self.election_names]))
-        ax.axvline(proportional, color='lightblue', lw=4, label=f"proportional: {proportional}")
+        proportional_share = np.mean([self.statewide_share[e] for e in self.election_names])
+        proportional_seats = round(proportional_share * self.num_districts * len(self.election_names))
+        # proportional_seats = round(sum([self.statewide_share[e]*self.num_districts for e in self.election_names]))
+        ax.axvline(proportional_seats, color='lightblue', lw=4, label=f"proportional: {proportional_seats}")
         plt.legend()
         if labels:
-            ax.set_xlabel(f"Aggregate {self.party} seats", fontsize=LABEL_SIZE)
+            ax.set_xlabel(f"Aggregate {self.party[:3]}. seats ({len(self.election_names)} elections, {100*proportional_share:0.1f}% {self.party[:3]}. share)", fontsize=LABEL_SIZE)
         if save:
             os.makedirs(self.output_folder, exist_ok=True)
             filename = f"{self.map_type}_aggProp"
