@@ -1,4 +1,5 @@
 import pandas as pd
+import tqdm
 
 def blocks_by_vtd(baf, state_fips, state) -> dict:
     """
