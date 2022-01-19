@@ -10,6 +10,8 @@ parser.add_argument("st", metavar="state", type=str,
 parser.add_argument("map", metavar="map", type=str,
                     choices=SUPPORTED_PLAN_TYPES,
                     help="the map to redistrict")
+parser.add_argument("n", metavar="iterations", type=int,
+                    help="the number of steps to take")
 parser.add_argument("--output_dir", type=str, metavar="output directory")
 parser.add_argument("--ensemble_dir", type=str, metavar="ensemble directory")
 parser.add_argument("--citizen_dir", type=str, metavar="citizen directory")
@@ -24,10 +26,11 @@ proposed_plans_file = args.proposed_plans_file
 proposed_winnow = args.proposed_winnow
 ensemble_dir = args.ensemble_dir
 citizen_dir = args.citizen_dir
+steps = args.n
 
 
 print(f"Loading {STATE} {PLAN_TYPE} scores...")
-scores = PlotFactory(STATE, PLAN_TYPE, ensemble_dir=ensemble_dir, citizen_dir=citizen_dir, 
+scores = PlotFactory(STATE, PLAN_TYPE, steps=steps, ensemble_dir=ensemble_dir, citizen_dir=citizen_dir, 
                      proposed_plans_file=proposed_plans_file, output_dir=output_dir, proposed_winnow=proposed_winnow)
 print(f"num proposed plans: {len(scores.proposed_plans)}")
 scores.plot_sea_level(save=True)
