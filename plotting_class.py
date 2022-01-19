@@ -41,7 +41,7 @@ class PlotFactory:
         if ensemble_dir is None:
             ensemble_subdir = dropbox_default_paths[state]["recom"]
             ensemble_dir = f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/{ensemble_subdir}"
-        if citizen_dir is None:
+        if citizen_dir is None and "citizen" in dropbox_default_paths:
             citizen_subdir = dropbox_default_paths[state]["citizen"]
             citizen_dir = f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/{citizen_subdir}"
         if proposed_plans_file is None:
