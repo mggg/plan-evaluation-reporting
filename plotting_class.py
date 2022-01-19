@@ -72,7 +72,7 @@ class PlotFactory:
                         }
         
         citizen_list = []
-        if os.path.exists(citizen_dir):
+        if citizen_dir and os.path.exists(citizen_dir):
             if os.path.exists(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl"):
                 with open(f"{citizen_dir}/{state.lower()}_{plan_type}_citizen_plans.jsonl", "rb") as fc:
                     citizen_list = list(fc)
