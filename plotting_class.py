@@ -28,7 +28,7 @@ class PlotFactory:
         if plan_type == "congress":
             eps = 0.01
         elif plan_type == "state_senate":
-            eps = 0.02
+            eps = 0.03
         elif plan_type == "state_house":
             eps = 0.05
         HOMEDIR = os.path.expanduser("~")
