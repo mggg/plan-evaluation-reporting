@@ -158,6 +158,19 @@
             ]
         },
         {
+            "name": "SOS20",
+            "candidates": [
+                {
+                    "name": "Democratic",
+                    "key": "SoS20_D"
+                },
+                {
+                    "name": "Republican",
+                    "key": "SoS20_R"
+                }
+            ]
+        },
+        {
             "name": "TRE20",
             "candidates": [
                 {
