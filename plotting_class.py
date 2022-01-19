@@ -32,9 +32,12 @@ class PlotFactory:
         elif plan_type == "state_house":
             eps = 0.05
         HOMEDIR = os.path.expanduser("~")
-        with open(f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/ensemble_paths.json") as fin:
-            dropbox_default_paths = json.load(fin)
-        
+        try:
+            with open(f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/ensemble_paths.json") as fin:
+                dropbox_default_paths = json.load(fin)
+        except FileNotFoundError:
+            dropbox_default_paths = {}
+
         if ensemble_dir is None:
             ensemble_subdir = dropbox_default_paths[state]["recom"]
             ensemble_dir = f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/{ensemble_subdir}"
