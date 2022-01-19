@@ -17,14 +17,14 @@
         "state_house": 0.07
     },
     "seed_plans": {
-        "state_house": "mo_state_house.csv"
+        "state_senate": "MO_vtd20_senate.csv"
     },
     "chain_types": [
         "neutral",
         "county_aware"
     ],
-    "dual_graph": "mo_vtds20.json",
-    "pop_col": "TOTPOP20",
+    "dual_graph": "mo_vtds20_cleaned.json",
+    "pop_col": "POP20",
     "county_col": "COUNTYFP20",
     "elections": [
         {
@@ -32,11 +32,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "Agen_D16"
+                    "key": "AGen16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "Agen_R16"
+                    "key": "AGen16_R"
                 }
             ]
         },
@@ -45,11 +45,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "GovD16"
+                    "key": "Gov16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "GovR16"
+                    "key": "Gov16_R"
                 }
             ]
         },
@@ -58,11 +58,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "LtGovD16"
+                    "key": "LtGov16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "LtGovR16"
+                    "key": "LtGov16_R"
                 }
             ]
         },
@@ -71,11 +71,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "SoSD16"
+                    "key": "SoS16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "SoSR16"
+                    "key": "SoS16_R"
                 }
             ]
         },
@@ -84,11 +84,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "StTresD16"
+                    "key": "StTres16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "StTresR16"
+                    "key": "StTres16_R"
                 }
             ]
         },
@@ -97,11 +97,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "USPresVpD16"
+                    "key": "USPresVp16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "USPresVpR16"
+                    "key": "USPresVp16_R"
                 }
             ]
         },
@@ -110,37 +110,11 @@
             "candidates": [
                 {
                     "name": "Democratic",
-                    "key": "USSenD16"
+                    "key": "USSen16_D"
                 },
                 {
                     "name": "Republican",
-                    "key": "USSenR16"
-                }
-            ]
-        },
-        {
-            "name": "AUD18",
-            "candidates": [
-                {
-                    "name": "Democratic",
-                    "key": "StAudit_D_18"
-                },
-                {
-                    "name": "Republican",
-                    "key": "StAudit_R_18"
-                }
-            ]
-        },
-        {
-            "name": "SEN18",
-            "candidates": [
-                {
-                    "name": "Democratic",
-                    "key": "US_Sen_D_18"
-                },
-                {
-                    "name": "Republican",
-                    "key": "US_Sen_R_18"
+                    "key": "USSen16_R"
                 }
             ]
         },
@@ -212,23 +186,7 @@
     ],
     "pov_party": "Democratic",
     "metrics": [
-        {"id": "TOTPOP20", "name": "TOTPOP20", "type": "col_tally"},
-        {"id": "WPOP20", "name": "WPOP20", "type": "col_tally"},
-        {"id": "BPOP20", "name": "BPOP20", "type": "col_tally"},
-        {"id": "AMINPOP20", "name": "AMINPOP20", "type": "col_tally"},
-        {"id": "ASIANPOP20", "name": "ASIANPOP20", "type": "col_tally"},
-        {"id": "NHPIPOP20", "name": "NHPIPOP20", "type": "col_tally"},
-        {"id": "OTHERPOP20", "name": "OTHERPOP20", "type": "col_tally"},
-        {"id": "2MOREPOP20", "name": "2MOREPOP20", "type": "col_tally"},
-        {"id": "VAP20", "name": "VAP20", "type": "col_tally"},
-        {"id": "WVAP20", "name": "WVAP20", "type": "col_tally"},
-        {"id": "BVAP20", "name": "BVAP20", "type": "col_tally"},
-        {"id": "AMINVAP20", "name": "AMINVAP20", "type": "col_tally"},
-        {"id": "ASIANVAP20", "name": "ASIANVAP20", "type": "col_tally"},
-        {"id": "NHPIVAP20", "name": "NHPIVAP20", "type": "col_tally"},
-        {"id": "OTHERVAP20", "name": "OTHERVAP20", "type": "col_tally"},
-        {"id": "2MOREVAP20", "name": "2MOREVAP20", "type": "col_tally"},
-        {"id": "HVAP20", "name": "HVAP20", "type": "col_tally"},
+        {"id": "POP20", "name": "POP20", "type": "col_tally"},
         {"id": "num_cut_edges", "name": "Cut Edges"},
         {"id": "num_county_pieces", "name": "County Pieces"},
         {"id": "num_split_counties", "name": "Split Counties"},
