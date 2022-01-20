@@ -1,6 +1,7 @@
 import click
 import warnings
 import pandas as pd
+from collections import defaultdict
 from gerrychain import Graph
 
 
@@ -32,15 +33,15 @@ def augment(block_graph_in_file, vtd_graph_in_file, baf_file, state_fips_code,
             baf_vtd_col):
     block_graph = Graph.from_json(block_graph_in_file)
     vtd_graph = Graph.from_json(vtd_graph_in_file)
-    baf_df = pd.read_csv(block_to_vtd_baf_path, sep='|',
+    baf_df = pd.read_csv(baf_file, sep='|',
                          dtype=str).set_index(baf_block_col)
 
     # Generate VTD IDs from BAF columns.
     baf_df['vtd_id'] = (state_fips_code +
-                        vtd_block_df[baf_county_col].str.zfill(3) +
-                        vtd_block_df[baf_vtd_col].str.zfill(6))
+                        baf_df[baf_county_col].str.zfill(3) +
+                        baf_df[baf_vtd_col].str.zfill(6))
     blocks_by_vtd = defaultdict(set)
-    for block, vtd in baf_dff['vtd_id'].items():
+    for block, vtd in baf_df['vtd_id'].items():
         blocks_by_vtd[vtd].add(block)
     block_graph_edges_by_geoid = {(block_graph.nodes[a][block_geoid_col],
                                    block_graph.nodes[b][block_geoid_col])
