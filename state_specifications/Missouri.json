@@ -14,7 +14,7 @@
     "epsilons": {
         "congress": 0.03,
         "state_senate": 0.03,
-        "state_house": 0.07
+        "state_house": 0.03
     },
     "seed_plans": {
         "state_senate": "MO_vtd20_senate.csv"
