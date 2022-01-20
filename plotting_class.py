@@ -34,7 +34,7 @@ class PlotFactory:
         HOMEDIR = os.path.expanduser("~")
         try:
             with open(f"{HOMEDIR}/Dropbox/PlanAnalysis/ensemble_analysis/ensemble_paths.json") as fin:
-                dropbox_default_paths = json.load(fin)
+                dropbox_default_paths = {} #json.load(fin)
         except FileNotFoundError:
             dropbox_default_paths = {}
 
@@ -272,7 +272,7 @@ class PlotFactory:
             for i in range(len(proposed_scores)):
                 for j, s in enumerate(proposed_scores[i]):
                     # horizontally jitter proposed scores regardless of whether there are multiple scores at the same height
-                    jitter = 0#random.uniform(-1/3, 1/3) #if proposed_scores[i].count(s) > 1 else 0
+                    jitter = random.uniform(-1/10, 1/10) if proposed_scores[i].count(s) > 1 else 0
                     ax.scatter(i + 1 + jitter,
                                 s,
                                 color=self.proposed_colors[j],
