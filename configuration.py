@@ -1,5 +1,5 @@
 ## Constants
-SUPPORTED_STATES = ["Michigan", "Virginia", "Wisconsin", "Utah", "Utah_blocks", "Pennsylvania", "Missouri", "North_Carolina"]
+SUPPORTED_STATES = ["Michigan", "Virginia", "Wisconsin", "Utah", "Utah_blocks", "Pennsylvania", "Missouri", "Missouri_blocks", "North_Carolina"]
 SUPPORTED_PLAN_TYPES = ["congress", "state_senate", "state_house", "school_board"]
 
 DUAL_GRAPH_DIR = "dual_graphs"
@@ -10,6 +10,7 @@ STATS_DIR = "ensemble_stats"
 SUPPORTED_METRICS = {
     "col_tally": "district_level",
     "num_cut_edges": "plan_wide",
+    "num_weighted_cut_edges": "plan_wide",
     "num_county_pieces": "plan_wide",
     "num_split_counties": "plan_wide",
     "num_municipal_pieces": "plan_wide",

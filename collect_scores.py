@@ -64,6 +64,7 @@ if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
 # path_long = "mi_chains/mi_cong_0.01_bal_10000_steps_non_county_aware.chain"
 chain_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.chain".format(state, CHAIN_DIR, state.lower(), plan_type,
                                                            eps, steps, method)
+print(chain_path)
 output_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.jsonl.gz".format(state, STATS_DIR, state.lower(), plan_type,
                                                            eps, steps, method)
 

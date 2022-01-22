@@ -41,6 +41,9 @@ for kind in ["ensemble", "proposed"]: # add/remove citizen if we have it/don't h
     if len(plans) > 0:
         all_kinds.append(kind)
 
+print('--- avgProp ---')
+scores.plot_avgProp(kinds=all_kinds, save=True)
+print('--- aggProp ---')
 scores.plot_aggProp(kinds=all_kinds, save=True)
 
 kind_types = []

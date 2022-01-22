@@ -165,13 +165,14 @@ class PlotFactory:
         print(f"Median {score}: {np.median(scores):.3f}")
         return
     
-    def get_bins_and_labels(self, val_range, unique_vals,num_labels=8):
+    def get_bins_and_labels(self, val_range, unique_vals,num_labels=8, use_simple=False, tick_scale=None):
         """
         Get necessary information for histograms. If we're working with only a few discrete, floating point values, then
         set the bin width to be relatively thin, Otherwise, adaptively set the bin width to the scale of our data. In
         both cases, shift the tick labels over to be in the center of the bins (shift by bin_width / 2).
         """
-        if type(val_range[1]) is not int and len(unique_vals) <= 20:
+        tick_scale = 1 if tick_scale is None else tick_scale
+        if (type(val_range[1]) is not int and len(unique_vals) <= 20) or use_simple:
             sorted_vals = sorted(unique_vals)
             bin_width = 0.2*(sorted_vals[1] - sorted_vals[0])
             hist_bins = []
@@ -182,7 +183,7 @@ class PlotFactory:
                 hist_bins.append(val + 3*bin_width/2)
                 tick_bins.append(val + bin_width/2)
                 num = round(val * self.num_districts)
-                tick_labels.append(f"{num}/{self.num_districts}")
+                tick_labels.append(f"{tick_scale * num}/{self.num_districts}")
         else:
             bin_width = 10 ** (np.floor(np.log10(val_range[1] - val_range[0])) - 1)
             if bin_width == 0.01: # TODO: is there a cleaner way to do this...
@@ -197,14 +198,15 @@ class PlotFactory:
             tick_labels = []
             for i, x in enumerate(hist_bins[:-1]):
                 if i % label_interval == 0:
-                    tick_labels.append(x)
+                    tick_labels.append(x * tick_scale)
                     tick_bins.append(x + bin_width / 2)
             for i, label in enumerate(tick_labels):
                 if type(label) == np.float64:
                     tick_labels[i] = round(label, 2)
+ 
         return hist_bins, tick_bins, tick_labels, bin_width
     
-    def plot_histogram(self, ax, score, scores):
+    def plot_histogram(self, ax, score, scores, use_simple=False, tick_scale=1):
         """
         Plot a histogram with the ensemble scores in bins and the proposed plans' scores as vertical lines.
         If there are many unique values, use a white border on the bins to distinguish, otherwise reduce the
@@ -212,7 +214,11 @@ class PlotFactory:
         """
         all_scores = scores["ensemble"] + scores["citizen"] + scores["proposed"]
         score_range = (min(all_scores), max(all_scores))
-        hist_bins, tick_bins, tick_labels, bin_width = self.get_bins_and_labels(score_range, set(all_scores))
+        hist_bins, tick_bins, tick_labels, bin_width = self.get_bins_and_labels(
+            score_range,
+            set(all_scores),
+            use_simple=use_simple,
+            tick_scale=tick_scale)
         ax.set_xticks(tick_bins)
         ax.set_xticklabels(tick_labels, fontsize=TICK_SIZE)
         rwidth    = 0.8     if len(set(scores)) < 20 else 1
@@ -234,7 +240,7 @@ class PlotFactory:
                 ax.axvline(s + bin_width / 2 + jitter,
                            color=self.proposed_colors[i],
                            lw=2,
-                           label=f"{self.proposed_names[i]}: {round(s,2)}",
+                           label=f"{self.proposed_names[i]}: {round(tick_scale*s,2)}",
                           )
             ax.legend()
         if self.ensemble_metrics[score]["type"] == "election_level":
@@ -607,3 +613,31 @@ class PlotFactory:
             plt.close()
         return ax
     
+    def plot_avgProp(self, kinds=["ensemble"], labels=True, save=False):
+        scores = {kind:self.aggregate_score("seats", kind=kind) if kind in kinds else [] for kind in ["ensemble", "citizen", "proposed"]}
+        agg_seats = {kind: [] for kind in scores}
+        for kind in scores:
+            if type(scores[kind]) == dict:
+                for i in range(len(scores[kind][self.election_names[0]])):
+                    seats = 0
+                    for election in self.election_names:
+                        seats += scores[kind][election][i]
+                    agg_seats[kind].append(seats)
+
+        _, ax = plt.subplots(figsize=(16,6))
+        ax = self.plot_histogram(ax, "seats", agg_seats, tick_scale=1/len(self.election_names))
+
+        proportional_share = np.mean([self.statewide_share[e] for e in self.election_names])
+        proportional_seats = proportional_share * self.num_districts * len(self.election_names)
+        proportional_avg_seats = round(proportional_share * self.num_districts, 2)
+        # proportional_seats = round(sum([self.statewide_share[e]*self.num_districts for e in self.election_names]))
+        ax.axvline(proportional_seats, color='lightblue', lw=4, label=f"proportional: {proportional_avg_seats}")
+        plt.legend()
+        if labels:
+            ax.set_xlabel(f"Average {self.party[:3]}. seats ({len(self.election_names)} elections, {100*proportional_share:0.1f}% {self.party[:3]}. share)", fontsize=LABEL_SIZE)
+        if save:
+            os.makedirs(self.output_folder, exist_ok=True)
+            filename = f"{self.map_type}_avgProp"
+            plt.savefig(f"{self.output_folder}/{filename}.png", dpi=300, bbox_inches='tight')  
+            plt.close()
+        return ax

@@ -36,7 +36,7 @@ class ChainRecorder:
 
         if county_aware and self.county_col is not None:
             return ReCom(self.pop_col, ideal_pop, epsilon,
-                         method=partial(division_bipartition_tree, division_tuples=[(self.county_col, 1)],
+                         method=partial(division_bipartition_tree, division_tuples=[(self.county_col, 10)],
                                         first_check_division=True))
         else:
             return ReCom(self.pop_col, ideal_pop, epsilon)

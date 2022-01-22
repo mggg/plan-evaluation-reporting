@@ -76,6 +76,9 @@ class PlanMetrics:
 
         if "num_cut_edges" in self.metric_ids:
             compactness_metrics["num_cut_edges"] = len(part["cut_edges"]) 
+        if "num_weighted_cut_edges" in self.metric_ids:
+            compactness_metrics["num_weighted_cut_edges"] = sum(
+                part.graph.edges[e]['weight'] for e in part["cut_edges"])
         if self.compute_counties_details:
             county_details = self.county_split_details(part)
         if "num_county_pieces" in self.metric_ids:
