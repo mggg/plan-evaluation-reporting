@@ -1,6 +1,20 @@
 # plan-evaluation
 A set of tools and resources for evaluating and visualizing proposed districting plans.
 
+## The following changes are implemented in this branch:
+
+* Newly included scripts: 
+    * `clip_dual.py`: Takes in a dual graph and clips it based on an assignment csv. Useful for creating dual graphs of clusters, Arguments: assignment_csv, dual_graph.
+    * `save_chains.py`: Assuming that a chain run took a multiple of 10 steps, this script saves 10 assignments.
+    * `ideal_population_constraint`: New population constraint to allow users to define their own ideal population.
+   
+* Other changes:
+   * Automatically assumes that muni_aware could be an argument
+   * Includes double bunking
+   * Allows for specification of ideal population in state_specifications file. 
+   * Automatically plots APBVAP
+   * Writes to and reads files from the same place; gets rid of the need for ensemble_paths.json
+ 
 ## Scripts for Ensemble Generation and Scoring Plans
 
 * `run_ensemble.py`: script used to generate a chain and save it's run.  Arguments: state, map_type, num_steps, --county_aware, and --quiet can be passed via the command line.

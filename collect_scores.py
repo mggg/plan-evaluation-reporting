@@ -24,6 +24,9 @@ parser.add_argument("n", metavar="iterations", type=int,
 parser.add_argument("--county_aware", action='store_const', const=True, default=False,
                     dest="county_aware",
                     help="Chain builds districts with awareness of counties? (default False)")
+parser.add_argument("--muni_aware", action='store_const', const=True, default=False, 
+                    dest="muni_aware",
+                    help="Chain buils districts with awareness of municipalities? (default False)")
 parser.add_argument('--verbose', '-v', action='count', default=0)
 parser.add_argument("--sub_sample", metavar="stride length", default=1, type=int, 
                     help="Stride length for sub-sampling the plan. Default is not to sub-sample.")
@@ -34,7 +37,9 @@ state = args.st
 plan_type = args.map
 steps = args.n
 county_aware = args.county_aware
+muni_aware = args.muni_aware
 method = "county_aware" if county_aware else "neutral"
+muni_method = "muni_aware" if muni_aware else "neutral"
 how_verbose = args.verbose
 stride_len = args.sub_sample
 
@@ -62,10 +67,10 @@ if len(state_metric_ids - set(SUPPORTED_METRIC_IDS)) > 0:
                   Unsupported metrics: {}".format(str(state_metric_ids - set(SUPPORTED_METRIC_IDS))))
 
 # path_long = "mi_chains/mi_cong_0.01_bal_10000_steps_non_county_aware.chain"
-chain_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.chain".format(state, CHAIN_DIR, state.lower(), plan_type,
-                                                           eps, steps, method)
-output_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}.jsonl.gz".format(state, STATS_DIR, state.lower(), plan_type,
-                                                           eps, steps, method)
+chain_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}_{}.chain".format(state, CHAIN_DIR, state.lower(), plan_type,
+                                                           eps, steps, method, muni_method)
+output_path = "{}/{}/{}_{}_{}_bal_{}_steps_{}_{}.jsonl.gz".format(state, STATS_DIR, state.lower(), plan_type,
+                                                           eps, steps, method, muni_method)
 
 election_names = [e["name"] for e in elections]
 ## sort candidates alphabetically so that the "first" party is consistent.

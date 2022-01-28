@@ -19,6 +19,9 @@ parser.add_argument("n", metavar="iterations", type=int,
 parser.add_argument("--county_aware", action='store_const', const=True, default=False,
                     dest="county_aware",
                     help="Chain builds districts with awareness of counties? (default False)")
+parser.add_argument("--muni_aware", action='store_const', const=True, default=False, dest=
+                    "muni_aware", 
+                    help="Chain builds districts with awareness of municipalities? (default False)")
 parser.add_argument("--quiet", dest="verbosity", action="store_const", const=None, default=100,
                     help="Silence * tracker of chain position?")
 args = parser.parse_args()
@@ -29,6 +32,9 @@ plan_type = args.map
 steps = args.n
 county_aware = args.county_aware
 county_aware_str = "county_aware" if county_aware else "neutral"
+muni_aware = args.muni_aware
+muni_aware_str = "muni_aware" if muni_aware else "neutral"
+
 output_dir = "{}/{}".format(state, CHAIN_DIR)
 verbose_freq = args.verbosity
 
@@ -40,22 +46,29 @@ eps = state_specification["epsilons"][plan_type]
 dual_graph_file = "{}/{}".format(DUAL_GRAPH_DIR, state_specification["dual_graph"])
 pop_col = state_specification["pop_col"]
 county_col = state_specification["county_col"]
+muni_col = state_specification["municipal_col"] if "municipal_col" in state_specification.keys() else None
 
+if "ideal_population" in state_specification.keys() and plan_type in state_specification["ideal_population"]:
+  ideal_population = state_specification["ideal_population"][plan_type]
+else:
+  ideal_population = None
 
-
+init_part = None
 ## Run and Record Chain
 graph = Graph.from_json(dual_graph_file)
-rec = ChainRecorder(graph, output_dir, pop_col, county_col, verbose_freq=verbose_freq)
+rec = ChainRecorder(graph, output_dir, pop_col, county_col, muni_col, verbose_freq=verbose_freq)
 
 if "seed_plans" in state_specification and plan_type in state_specification["seed_plans"]:
     seed_plan_path = state_specification["seed_plans"][plan_type] 
     seed_plan = pd.read_csv(f"seed_plans/{seed_plan_path}", dtype={"GEOID20": "str", "assignment": int}).set_index("GEOID20").to_dict()['assignment']
     ddict = {n: seed_plan[graph.nodes()[n]["GEOID20"]] for n in graph.nodes()}
-    seed_plan = rec.get_partition(ddict)
+    init_part = rec.get_partition(ddict)
     print("seeded")
 else:
     seed_plan = None
 
-rec.record_chain(k, eps, steps,"{}_{}_{}_bal_{}_steps_{}.chain".format(state.lower(), plan_type,
-                                                                       eps, steps, county_aware_str),
-                         county_aware=county_aware, initial_partition=seed_plan)
+ 
+rec.record_chain(k, eps, steps, "{}_{}_{}_bal_{}_steps_{}_{}.chain".format(state.lower(), plan_type,
+                                                                       eps, steps, county_aware_str, muni_aware_str),
+                         county_aware=county_aware, muni_aware = muni_aware, ideal_pop=ideal_population, initial_partition=init_part)
+
